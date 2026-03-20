@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+#After creating the backend folder.
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
