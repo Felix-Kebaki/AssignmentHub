@@ -15,4 +15,11 @@ public class User {
     private String FirstName;
     private String LastName;
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
 }

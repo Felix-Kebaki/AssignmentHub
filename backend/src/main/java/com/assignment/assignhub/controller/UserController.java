@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("auth")
@@ -37,7 +39,17 @@ public class UserController {
     }
 
     @PutMapping("/updateProfile/{id}")
-    public ResponseEntity<User> updateProfile(@PathVariable Long id,@RequestBody User user){
+    public ResponseEntity<String> updateProfile(@PathVariable Long id,@RequestBody User user){
         return ResponseEntity.ok(userService.updateProfile(id,user));
+    }
+
+    @DeleteMapping("/deleteUser/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id){
+        return ResponseEntity.ok(userService.deleteUser(id));
+    }
+
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<List<User>> getAllUsers(){
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }

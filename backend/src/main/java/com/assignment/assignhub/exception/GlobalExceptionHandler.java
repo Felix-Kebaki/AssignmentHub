@@ -13,34 +13,43 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ResponseBody
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String,String>> exceptionHandler(UserNotFoundException exception){
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Map<String,String>> exceptionHandler(NotFoundException exception){
         Map<String,String> errorMap=new HashMap<>();
         errorMap.put("errorMessage",exception.getMessage());
         return new ResponseEntity<>(errorMap, HttpStatus.NOT_FOUND);
     }
 
     @ResponseBody
-    @ExceptionHandler(UserFormIsIncompleteException.class)
-    public ResponseEntity<Map<String,String>> exceptionHandler(UserFormIsIncompleteException exception){
+    @ExceptionHandler(FormIsIncompleteException.class)
+    public ResponseEntity<Map<String,String>> exceptionHandler(FormIsIncompleteException exception){
         Map<String,String> errorMap=new HashMap<>();
         errorMap.put("errorMessage",exception.getMessage());
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
     }
 
     @ResponseBody
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<Map<String,String>> exceptionHandler(UserAlreadyExistsException exception){
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<Map<String,String>> exceptionHandler(AlreadyExistsException exception){
         Map<String,String> errorMap=new HashMap<>();
         errorMap.put("errorMessage",exception.getMessage());
         return new ResponseEntity<>(errorMap, HttpStatus.CONFLICT);
     }
 
     @ResponseBody
-    @ExceptionHandler(UserIncorrectPasswordException.class)
-    public ResponseEntity<Map<String,String>> exceptionHandler(UserIncorrectPasswordException exception){
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Map<String,String>> exceptionHandler(UnauthorizedException exception){
         Map<String,String> errorMap=new HashMap<>();
         errorMap.put("errorMessage",exception.getMessage());
         return new ResponseEntity<>(errorMap, HttpStatus.UNAUTHORIZED);
     }
+
+    @ResponseBody
+    @ExceptionHandler(OperationFailException.class)
+    public ResponseEntity<Map<String,String>> exceptionHandler(OperationFailException exception){
+        Map<String,String> errorMap=new HashMap<>();
+        errorMap.put("errorMessage",exception.getMessage());
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+    }
+
 }
