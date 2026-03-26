@@ -34,4 +34,7 @@ public class Unit {
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
     private List<Course> courses=new ArrayList<>();
+
+    @OneToMany(mappedBy = "unit", cascade = CascadeType.ALL)
+    private List<Assignment> assignments = new ArrayList<>();
 }
