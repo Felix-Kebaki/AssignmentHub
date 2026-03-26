@@ -1,9 +1,12 @@
 package com.assignment.assignhub.service;
 
+import com.assignment.assignhub.dto.CourseResponse;
 import com.assignment.assignhub.exception.FormIsIncompleteException;
 import com.assignment.assignhub.exception.NotFoundException;
 import com.assignment.assignhub.exception.OperationFailException;
+import com.assignment.assignhub.mapper.CourseMapper;
 import com.assignment.assignhub.model.Course;
+import com.assignment.assignhub.model.Role;
 import com.assignment.assignhub.model.User;
 import com.assignment.assignhub.repository.CourseRepository;
 import com.assignment.assignhub.repository.UserRepository;
@@ -51,9 +54,12 @@ public class CourseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','INSTRUCTOR')")
-    public List<Course> getAllCourses(){
+    public List<CourseResponse> getAllCourses(){
         try {
-            return courseRepository.findAll();
+            return courseRepository.findAll()
+                    .stream()
+                    .map(CourseMapper::toDTO)
+                    .toList();
         }catch(Exception e){
             throw new NotFoundException("Unable to fetch courses");
         }
@@ -66,6 +72,10 @@ public class CourseService {
 
         Course course=courseRepository.findById(courseId)
                 .orElseThrow(()->new NotFoundException("Cannot find course with id "+courseId));
+
+        if(student.getRole()!= Role.STUDENT){
+            throw new OperationFailException("Cannot assign lecture a course");
+        }
 
         try {
             student.setCourse(course);

@@ -1,8 +1,14 @@
 package com.assignment.assignhub.service;
 
+import com.assignment.assignhub.dto.AuthResponse;
+import com.assignment.assignhub.dto.UserResponse;
 import com.assignment.assignhub.exception.*;
+import com.assignment.assignhub.mapper.UserMapper;
+import com.assignment.assignhub.model.Course;
+import com.assignment.assignhub.model.Role;
 import com.assignment.assignhub.model.User;
 import com.assignment.assignhub.model.UserPrincipal;
+import com.assignment.assignhub.repository.CourseRepository;
 import com.assignment.assignhub.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +30,8 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     UserRepository userRepository;
+    @Autowired
+    private CourseRepository courseRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -41,28 +49,44 @@ public class UserService implements UserDetailsService {
         return new UserPrincipal(user.get());
     }
 
-    public String registerUser(User user) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public AuthResponse registerUser(User user) {
+
         if (user.getFirstName() == null ||
                 user.getLastName() == null ||
                 user.getPassword() == null ||
                 user.getEmail() == null ||
-                user.getRole() == null) {
+                user.getRole()==null ) {
             throw new FormIsIncompleteException("Input all fields");
+        }
+        if(user.getRole()== Role.STUDENT && user.getCourseName()==null){
+            throw new FormIsIncompleteException("Input the course of the student");
         }
 
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new AlreadyExistsException("Account already exists with email " + user.getEmail());
         }
+
+        if(user.getRole()==Role.STUDENT) {
+            Course course = courseRepository.findByCourseName(user.getCourseName())
+                    .orElseThrow(() -> new NotFoundException("Cannot find course called " + user.getCourseName()));
+            user.setCourse(course);
+        }
+
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
         user.setPassword(encoder.encode(user.getPassword()));
         User createdUser = userRepository.save(user);
+
+        AuthResponse response = new AuthResponse();
         if (createdUser != null) {
-            return jwtService.generateToken(createdUser.getEmail());
+            response.setToken(jwtService.generateToken(createdUser.getEmail()));
+            return response;
         }
-        return "Unable to create user";
+        response.setErrorMessage("Unable to register user");
+        return response;
     }
 
-    public String loginUser(User user, AuthenticationManager authManager) {
+    public AuthResponse loginUser(User user, AuthenticationManager authManager) {
         try {
             if (user.getEmail() == null || user.getPassword() == null) {
                 throw new FormIsIncompleteException("Input all fields");
@@ -79,7 +103,9 @@ public class UserService implements UserDetailsService {
                     )
             );
             if (authentication.isAuthenticated()) {
-                return jwtService.generateToken(user.getEmail());
+                AuthResponse response=new AuthResponse();
+                response.setToken(jwtService.generateToken(user.getEmail()));
+                return response;
             } else {
                 throw new UnauthorizedException("Incorrect password");
             }
@@ -152,9 +178,12 @@ public class UserService implements UserDetailsService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<User> getAllUsers(){
+    public List<UserResponse> getAllUsers(){
         try{
-            return userRepository.findAll();
+            return userRepository.findAll()
+                    .stream()
+                    .map(UserMapper::toDTO)
+                    .toList();
         }catch (Exception e){
             throw new NotFoundException("Unable to fetch users");
         }

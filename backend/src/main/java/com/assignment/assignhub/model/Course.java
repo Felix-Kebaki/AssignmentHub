@@ -1,8 +1,10 @@
 package com.assignment.assignhub.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,6 +17,10 @@ public class Course {
     private Long id;
     private String courseName;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL) //mapped used in only this and many to many,it tells spring the relationship is controlled by who
     private List<User> students;
+
+    @ManyToMany(mappedBy = "courses")
+    private List<Unit> units=new ArrayList<>();
 }
