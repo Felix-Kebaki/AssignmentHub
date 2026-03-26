@@ -1,5 +1,7 @@
 package com.assignment.assignhub.controller;
 
+import com.assignment.assignhub.dto.AuthResponse;
+import com.assignment.assignhub.dto.UserResponse;
 import com.assignment.assignhub.model.User;
 import com.assignment.assignhub.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +26,12 @@ public class UserController {
     AuthenticationManager authManager;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user){
+    public ResponseEntity<AuthResponse> registerUser(@RequestBody User user){
         return new ResponseEntity<>(userService.registerUser(user), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user){
+    public ResponseEntity<AuthResponse> loginUser(@RequestBody User user){
         return ResponseEntity.ok(userService.loginUser(user,authManager));
     }
 
@@ -49,7 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/getAllUsers")
-    public ResponseEntity<List<User>> getAllUsers(){
+    public ResponseEntity<List<UserResponse>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
     }
 }
