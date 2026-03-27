@@ -11,4 +11,5 @@ public class UnitResponse {
     private String courseName;
     private String instructorName;
     private List<String> courseNames;
+    private List<AssignmentResponse> assignments;
 }

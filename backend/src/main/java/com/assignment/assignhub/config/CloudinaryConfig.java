@@ -2,10 +2,12 @@ package com.assignment.assignhub.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Configuration
 public class CloudinaryConfig {
     private  String cloud_name;
     private String api_key;

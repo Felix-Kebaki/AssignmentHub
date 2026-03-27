@@ -1,7 +1,11 @@
 package com.assignment.assignhub.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -12,13 +16,18 @@ public class Assignment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String assignmentName;
-    private String fileUrl;
+
+    @ElementCollection
+    private List<String> fileUrls = new ArrayList<>();
 
     @Transient
     private String fileType;
-    private String assignmentPublicId;
-    private String assignmentType;
 
+    @ElementCollection
+    private List<String> assignmentPublicIds = new ArrayList<>();
+    private String resourceType;
+
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "unit_id")
     private Unit unit;

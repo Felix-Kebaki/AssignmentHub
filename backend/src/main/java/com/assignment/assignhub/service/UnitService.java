@@ -3,13 +3,12 @@ package com.assignment.assignhub.service;
 import com.assignment.assignhub.dto.UnitResponse;
 import com.assignment.assignhub.exception.*;
 import com.assignment.assignhub.mapper.UnitMapper;
-import com.assignment.assignhub.model.Course;
-import com.assignment.assignhub.model.Role;
-import com.assignment.assignhub.model.Unit;
-import com.assignment.assignhub.model.User;
+import com.assignment.assignhub.model.*;
 import com.assignment.assignhub.repository.CourseRepository;
 import com.assignment.assignhub.repository.UnitRepository;
 import com.assignment.assignhub.repository.UserRepository;
+import com.assignment.assignhub.utils.DeleteMediaInCloudinary;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +18,9 @@ import java.util.Optional;
 
 @Service
 public class UnitService {
+
+    @Autowired
+    DeleteMediaInCloudinary deleteMediaInCloudinary;
 
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
@@ -87,8 +89,11 @@ public class UnitService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public String deleteUnit(Long id){
-        if(!unitRepository.existsById(id)){
-            throw new NotFoundException("Cannot find unit with id "+id);
+        Unit unit=unitRepository.findById(id)
+                .orElseThrow(()->new NotFoundException("Cannot find unit with id "+id));
+
+        for(Assignment assignment:unit.getAssignments()){
+            deleteMediaInCloudinary.deleteAssignmentFiles(assignment);
         }
         try{
             unitRepository.deleteById(id);
