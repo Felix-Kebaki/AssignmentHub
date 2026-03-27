@@ -1,5 +1,6 @@
 package com.assignment.assignhub.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -35,6 +36,7 @@ public class Unit {
     )
     private List<Course> courses=new ArrayList<>();
 
-    @OneToMany(mappedBy = "unit", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "unit", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Assignment> assignments = new ArrayList<>();
 }

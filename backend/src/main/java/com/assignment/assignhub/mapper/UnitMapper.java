@@ -1,5 +1,6 @@
 package com.assignment.assignhub.mapper;
 
+import com.assignment.assignhub.dto.AssignmentResponse;
 import com.assignment.assignhub.dto.UnitResponse;
 import com.assignment.assignhub.model.Course;
 import com.assignment.assignhub.model.Unit;
@@ -19,6 +20,20 @@ public class UnitMapper {
             dto.setCourseNames(
                     unit.getCourses().stream()
                             .map(Course::getCourseName)
+                            .toList()
+            );
+        }
+        if(unit.getAssignments() != null){
+            dto.setAssignments(
+                    unit.getAssignments().stream()
+                            .map(assignment -> {
+                                AssignmentResponse ar = new AssignmentResponse();
+                                ar.setId(assignment.getId());
+                                ar.setAssignmentName(assignment.getAssignmentName());
+                                ar.setResourceType(assignment.getResourceType());
+                                ar.setFileUrls(assignment.getFileUrls());
+                                return ar;
+                            })
                             .toList()
             );
         }
