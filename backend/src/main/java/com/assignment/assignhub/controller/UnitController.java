@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("units")
+@CrossOrigin("http://localhost:5173")
 public class UnitController {
 
     UnitService unitService;

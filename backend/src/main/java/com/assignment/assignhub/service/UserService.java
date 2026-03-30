@@ -50,16 +50,16 @@ public class UserService implements UserDetailsService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public AuthResponse registerUser(User user) {
+    public String registerUser(User user) {
 
         if (user.getFirstName() == null ||
                 user.getLastName() == null ||
                 user.getPassword() == null ||
                 user.getEmail() == null ||
-                user.getRole()==null ) {
+                user.getRole() == null) {
             throw new FormIsIncompleteException("Input all fields");
         }
-        if(user.getRole()== Role.STUDENT && user.getCourseName()==null){
+        if (user.getRole() == Role.STUDENT && user.getCourseName() == null) {
             throw new FormIsIncompleteException("Input the course of the student");
         }
 
@@ -67,7 +67,7 @@ public class UserService implements UserDetailsService {
             throw new AlreadyExistsException("Account already exists with email " + user.getEmail());
         }
 
-        if(user.getRole()==Role.STUDENT) {
+        if (user.getRole() == Role.STUDENT) {
             Course course = courseRepository.findByCourseName(user.getCourseName())
                     .orElseThrow(() -> new NotFoundException("Cannot find course called " + user.getCourseName()));
             user.setCourse(course);
@@ -75,15 +75,12 @@ public class UserService implements UserDetailsService {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
         user.setPassword(encoder.encode(user.getPassword()));
-        User createdUser = userRepository.save(user);
-
-        AuthResponse response = new AuthResponse();
-        if (createdUser != null) {
-            response.setToken(jwtService.generateToken(createdUser.getEmail()));
-            return response;
+        try {
+            userRepository.save(user);
+            return "Registered successfully";
+        } catch (Exception e) {
+            throw new OperationFailException("Unable to register user");
         }
-        response.setErrorMessage("Unable to register user");
-        return response;
     }
 
     public AuthResponse loginUser(User user, AuthenticationManager authManager) {
@@ -103,7 +100,7 @@ public class UserService implements UserDetailsService {
                     )
             );
             if (authentication.isAuthenticated()) {
-                AuthResponse response=new AuthResponse();
+                AuthResponse response = new AuthResponse();
                 response.setToken(jwtService.generateToken(user.getEmail()));
                 return response;
             } else {
@@ -164,27 +161,27 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public String deleteUser(Long id){
-        if(!userRepository.existsById(id)){
-            throw new NotFoundException("Cannot find user with id "+id);
+    public String deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new NotFoundException("Cannot find user with id " + id);
         }
 
-        try{
+        try {
             userRepository.deleteById(id);
             return "Deleted successfully";
-        }catch (Exception e){
-            throw new OperationFailException("Unable to delete user with id "+id);
+        } catch (Exception e) {
+            throw new OperationFailException("Unable to delete user with id " + id);
         }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserResponse> getAllUsers(){
-        try{
+    public List<UserResponse> getAllUsers() {
+        try {
             return userRepository.findAll()
                     .stream()
                     .map(UserMapper::toDTO)
                     .toList();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new NotFoundException("Unable to fetch users");
         }
     }

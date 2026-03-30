@@ -6,13 +6,13 @@ import com.assignment.assignhub.repository.CourseRepository;
 import com.assignment.assignhub.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("course")
+@CrossOrigin("http://localhost:5173")
 public class CourseController {
 
     CourseService courseService;
@@ -20,25 +20,21 @@ public class CourseController {
         this.courseService=courseService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("create")
     public ResponseEntity<String> createCourse(@RequestBody Course course){
         return new ResponseEntity<>(courseService.createCourse(course), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteCourse/{id}")
     public ResponseEntity<String> deleteCourse(@PathVariable Long id){
         return ResponseEntity.ok(courseService.deleteCourse(id));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','INSTRUCTOR')")
     @GetMapping("/getAllCourses")
     public ResponseEntity<List<CourseResponse>> getAllCourses(){
         return ResponseEntity.ok(courseService.getAllCourses());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/assignCourseToStudent/{courseId}/{userId}")
     public ResponseEntity<String> assignStudentCourse(@PathVariable Long courseId,@PathVariable Long userId){
         return ResponseEntity.ok(courseService.assignStudentCourse(courseId,userId));

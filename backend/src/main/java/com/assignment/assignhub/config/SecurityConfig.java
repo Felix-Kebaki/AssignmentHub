@@ -1,6 +1,7 @@
 package com.assignment.assignhub.config;
 
 import com.assignment.assignhub.exception.CustomAccessDeniedHandler;
+import com.assignment.assignhub.exception.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,18 +34,21 @@ public class SecurityConfig {
     CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception{
-        return http.csrf(customizer->customizer.disable())
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint)throws Exception{
+        return http
+                .cors(Customizer.withDefaults())
+                .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(request->request
                         .requestMatchers("/auth/login")
                         .permitAll()
                         .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptions ->
-                        exceptions.accessDeniedHandler(customAccessDeniedHandler)
+                        exceptions
+                                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                                .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .build();
     }

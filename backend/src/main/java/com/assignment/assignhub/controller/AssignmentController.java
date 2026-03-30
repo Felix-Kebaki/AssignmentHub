@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("assignments")
+@CrossOrigin("http://localhost:5173")
 public class AssignmentController {
 
     AssignmentService assignmentService;
