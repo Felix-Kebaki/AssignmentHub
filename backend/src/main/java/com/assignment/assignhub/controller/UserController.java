@@ -2,6 +2,7 @@ package com.assignment.assignhub.controller;
 
 import com.assignment.assignhub.dto.AuthResponse;
 import com.assignment.assignhub.dto.UserResponse;
+import com.assignment.assignhub.exception.OperationFailException;
 import com.assignment.assignhub.model.User;
 import com.assignment.assignhub.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -59,6 +60,23 @@ public class UserController {
         }
 
         return ResponseEntity.ok(authentication.getName());
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logoutUser(HttpServletResponse response) {
+        try {
+            Cookie cookie = new Cookie("jwt", null);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(false);
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok("Logged out successfully");
+        } catch (Exception e) {
+            throw new OperationFailException("Unable to logout");
+        }
     }
 
     @GetMapping("/profile/{id}")

@@ -31,4 +31,7 @@ public class Assignment {
     @ManyToOne
     @JoinColumn(name = "unit_id")
     private Unit unit;
+
+    @OneToMany(mappedBy = "assignment")
+    private List<Submission> submissions;
 }
