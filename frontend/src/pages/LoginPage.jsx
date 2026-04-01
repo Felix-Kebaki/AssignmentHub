@@ -19,8 +19,8 @@ export function LoginPage() {
     const HandleSubmitForm= async (e)=>{
         e.preventDefault()
         try {
-            console.log(formData)
             const response=await axios.post("http://localhost:9090/auth/login",formData,{withCredentials:true})
+            localStorage.setItem("userId",response.data.id);
             navigate("/")
         } catch (error) {
             console.error(error.message || error)

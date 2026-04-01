@@ -89,9 +89,8 @@ public class UserService implements UserDetailsService {
                 throw new FormIsIncompleteException("Input all fields");
             }
 
-            if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
-                throw new NotFoundException("Cannot find user with email " + user.getEmail());
-            }
+            User foundUser=userRepository.findByEmail(user.getEmail())
+                    .orElseThrow(()->new NotFoundException("Cannot find user with email " + user.getEmail()));
 
             Authentication authentication = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -102,6 +101,7 @@ public class UserService implements UserDetailsService {
             if (authentication.isAuthenticated()) {
                 AuthResponse response = new AuthResponse();
                 response.setToken(jwtService.generateToken(user.getEmail()));
+                response.setId(foundUser.getId());
                 return response;
             } else {
                 throw new UnauthorizedException("Incorrect password");
@@ -116,10 +116,10 @@ public class UserService implements UserDetailsService {
 
         User requestedUser = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Cannot find user with id " + id));
-
-        if (!auth.getName().equals(requestedUser.getEmail())) {
-            throw new UnauthorizedException("Unauthorized access");
-        }
+//
+//        if (!auth.getName().equals(requestedUser.getEmail())) {
+//            throw new UnauthorizedException("Unauthorized access");
+//        }
 
         return requestedUser;
     }

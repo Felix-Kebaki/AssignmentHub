@@ -7,8 +7,6 @@ import com.assignment.assignhub.model.*;
 import com.assignment.assignhub.repository.CourseRepository;
 import com.assignment.assignhub.repository.UnitRepository;
 import com.assignment.assignhub.repository.UserRepository;
-import com.assignment.assignhub.utils.DeleteMediaInCloudinary;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +17,20 @@ import java.util.Optional;
 @Service
 public class UnitService {
 
-    @Autowired
-    DeleteMediaInCloudinary deleteMediaInCloudinary;
-
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
     UnitRepository unitRepository;
-    public UnitService(UnitRepository unitRepository, UserRepository userRepository, CourseRepository courseRepository){
+    CloudinaryService cloudinaryService;
+    public UnitService(
+            UnitRepository unitRepository,
+            UserRepository userRepository,
+            CourseRepository courseRepository,
+            CloudinaryService cloudinaryService
+    ){
         this.unitRepository=unitRepository;
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
+        this.cloudinaryService=cloudinaryService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -92,9 +94,13 @@ public class UnitService {
         Unit unit=unitRepository.findById(id)
                 .orElseThrow(()->new NotFoundException("Cannot find unit with id "+id));
 
-        for(Assignment assignment:unit.getAssignments()){
-            deleteMediaInCloudinary.deleteAssignmentFiles(assignment);
+        for(Assignment assignment: unit.getAssignments()){
+            cloudinaryService.deleteFiles(assignment.getAssignmentPublicIds());
+            for(Submission sub:assignment.getSubmissions()){
+                cloudinaryService.deleteFiles(sub.getSubmissionPublicIds());
+            }
         }
+
         try{
             unitRepository.deleteById(id);
             return "Unit deleted successfully";

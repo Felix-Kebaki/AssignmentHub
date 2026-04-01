@@ -17,7 +17,7 @@ export function RegisterPage() {
 
   const fetchCourses=async()=>{
     try {
-        const data=await axios.get("http://localhost:9090/course/getAllCourses")
+        const data=await axios.get("http://localhost:9080/course/getAllCourses")
         console.log(data)
     } catch (error) {
         console.error(error.message || error)

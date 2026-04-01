@@ -4,14 +4,21 @@ import axios from "axios";
 
 export function ProtectedRoute({ children }) {
   const [isAuth, setIsAuth] = useState(null);
+  async function checkAuth(){
+      const res=await axios.get("http://localhost:9080/auth/me", {
+        withCredentials: true,
+      })
+      .then(() => {
+        setIsAuth(true);
+      })
+      .catch((error) => {
+        setIsAuth(false);
+        console.error(error.response || error);
+      });
+  }
 
   useEffect(() => {
-    axios.get("http://localhost:9090/auth/me", {
-      withCredentials: true
-    })
-    .then(() => setIsAuth(true))
-    .catch((error) => {setIsAuth(false)
-        console.log(error.response)});
+    checkAuth()
   }, []);
 
   if (isAuth === null) return <div>Loading...</div>;

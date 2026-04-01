@@ -3,10 +3,12 @@ package com.assignment.assignhub.service;
 import com.assignment.assignhub.exception.FormIsIncompleteException;
 import com.assignment.assignhub.exception.NotFoundException;
 import com.assignment.assignhub.exception.OperationFailException;
+import com.assignment.assignhub.exception.UnauthorizedException;
 import com.assignment.assignhub.model.Submission;
 import com.assignment.assignhub.model.User;
 import com.assignment.assignhub.repository.SubmissionRepository;
 import com.assignment.assignhub.repository.UserRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,13 +25,19 @@ public class SubmissionService {
     SubmissionRepository submissionRepository;
     private final com.cloudinary.Cloudinary cloudinary;
     UserRepository userRepository;
+    CloudinaryService cloudinaryService;
 
-    public SubmissionService(SubmissionRepository submissionRepository, com.cloudinary.Cloudinary cloudinary, UserRepository userRepository) {
+    public SubmissionService(SubmissionRepository submissionRepository,
+                             com.cloudinary.Cloudinary cloudinary,
+                             UserRepository userRepository,
+                             CloudinaryService cloudinaryService) {
         this.submissionRepository = submissionRepository;
         this.cloudinary=cloudinary;
         this.userRepository=userRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
+    @PreAuthorize("hasRole('STUDENT')")
     public String submitAssignment(
             String fileType,
             List<MultipartFile> files
@@ -81,5 +89,32 @@ public class SubmissionService {
 
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    public String deleteSubmission(Long id){
+        Submission sub=submissionRepository.findById(id)
+                .orElseThrow(()->new NotFoundException("Cannot find submission with id "+id));
+
+        if(!getCurrentUser().equals(sub.getSubmittedBy())){
+           throw new UnauthorizedException("Unauthorized access");
+        }
+
+        try{
+            cloudinaryService.deleteFiles(sub.getSubmissionPublicIds());
+            submissionRepository.deleteById(id);
+            return "Successfully deleted submission";
+        }catch(Exception e){
+            throw new OperationFailException("Unable to delete submission");
+        }
+    }
+
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    public List<Submission> getSubmissions(Long id){
+        try{
+            return submissionRepository.findByAssignment_id(id);
+        }catch (Exception e){
+            throw new OperationFailException("Unable to get submissions");
+        }
     }
 }

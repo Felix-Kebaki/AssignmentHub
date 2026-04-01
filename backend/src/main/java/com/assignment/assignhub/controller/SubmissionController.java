@@ -1,5 +1,6 @@
 package com.assignment.assignhub.controller;
 
+import com.assignment.assignhub.model.Submission;
 import com.assignment.assignhub.service.SubmissionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,4 +25,15 @@ public class SubmissionController {
     ){
         return new ResponseEntity<>(submissionService.submitAssignment(fileType,files), HttpStatus.OK);
     }
+
+    @DeleteMapping("/deleteSubmission/{id}")
+    public ResponseEntity<String> deleteSubmission(@PathVariable Long id){
+        return new ResponseEntity<>(submissionService.deleteSubmission(id),HttpStatus.OK);
+    }
+
+    @GetMapping("/getSubmissions/{id}")
+    public ResponseEntity<List<Submission>> getSubmissions(@PathVariable Long id){
+        return new ResponseEntity<>(submissionService.getSubmissions(id),HttpStatus.OK);
+    }
+
 }

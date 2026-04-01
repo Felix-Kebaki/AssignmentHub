@@ -30,17 +30,19 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+            FilterChain filterChain
+    ) throws ServletException, IOException {
         String path = request.getServletPath();
 
         //Skip auth endpoints
-        if (path.equals("/auth/login")) {
+        if (path.startsWith("/auth/login") || path.startsWith("/auth/logout")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String token=null;
         String username=null;
+
         if (request.getCookies() != null) {
             for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
                 if ("jwt".equals(cookie.getName())) {
