@@ -34,4 +34,9 @@ public class UnitController {
     public ResponseEntity<String> deleteUnit(@PathVariable Long id){
         return ResponseEntity.ok(unitService.deleteUnit(id));
     }
+
+    @GetMapping("/getYourUnits")
+    public ResponseEntity<List<UnitResponse>> getYourUnits(){
+        return new ResponseEntity<>(unitService.getYourUnits(),HttpStatus.OK);
+    }
 }

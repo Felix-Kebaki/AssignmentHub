@@ -39,4 +39,9 @@ public class AssignmentController {
 //    public ResponseEntity<List<AssignmentResponse>> instructorViewAssignments(@PathVariable String email){
 //        return new ResponseEntity<>(assignmentService.instructorViewAssignments(email));
 //    }
+
+    @DeleteMapping("/deleteAssignment/{id}")
+    public ResponseEntity<String> deleteAssignment(@PathVariable Long id){
+        return new ResponseEntity<>(assignmentService.deleteAssignment(id),HttpStatus.OK);
+    }
 }

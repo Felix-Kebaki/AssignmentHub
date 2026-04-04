@@ -79,9 +79,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("/profile/{id}")
-    public ResponseEntity<User> getProfile(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getProfile(id));
+    @GetMapping("/profile")
+    public ResponseEntity<User> getProfile() {
+        return ResponseEntity.ok(userService.getProfile());
     }
 
     @PutMapping("/updateProfile/{id}")

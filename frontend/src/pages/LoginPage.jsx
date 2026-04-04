@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function LoginPage() {
+  const [errorMessage,setErrorMessage]=useState(null)
     const [formData,setFormData]=useState({
         email:"",
         password:""
@@ -19,11 +20,14 @@ export function LoginPage() {
     const HandleSubmitForm= async (e)=>{
         e.preventDefault()
         try {
-            const response=await axios.post("http://localhost:9090/auth/login",formData,{withCredentials:true})
-            localStorage.setItem("userId",response.data.id);
+            const response=await axios.post("http://localhost:9080/auth/login",formData,{withCredentials:true})
             navigate("/")
         } catch (error) {
-            console.error(error.message || error)
+            console.error(error.response.data.errorMessage || error.response.data || error.response)
+            setErrorMessage(error.response.data.errorMessage || error.response.data || error.response)
+            setTimeout(()=>{
+              setErrorMessage(null)
+            },3000)
         }
     }
 
@@ -58,6 +62,7 @@ export function LoginPage() {
           <div>
             <button type="submit">Login</button>
           </div>
+          {errorMessage!==null?<pre>{errorMessage}</pre>:null}
         </form>
       </div>
     </section>

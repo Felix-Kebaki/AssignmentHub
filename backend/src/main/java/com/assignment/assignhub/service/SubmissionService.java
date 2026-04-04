@@ -99,9 +99,17 @@ public class SubmissionService {
         if(!getCurrentUser().equals(sub.getSubmittedBy())){
            throw new UnauthorizedException("Unauthorized access");
         }
+        String resource;
+        if(sub.getSubmissionType().equals("Document")){
+            resource="raw";
+        }else if(sub.getSubmissionType().equals("Photo")){
+            resource="image";
+        }else{
+            resource="video";
+        }
 
         try{
-            cloudinaryService.deleteFiles(sub.getSubmissionPublicIds());
+            cloudinaryService.deleteFiles(sub.getSubmissionPublicIds(),resource);
             submissionRepository.deleteById(id);
             return "Successfully deleted submission";
         }catch(Exception e){

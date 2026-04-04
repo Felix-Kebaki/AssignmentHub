@@ -59,6 +59,7 @@ public class UserService implements UserDetailsService {
                 user.getRole() == null) {
             throw new FormIsIncompleteException("Input all fields");
         }
+
         if (user.getRole() == Role.STUDENT && user.getCourseName() == null) {
             throw new FormIsIncompleteException("Input the course of the student");
         }
@@ -111,15 +112,12 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public User getProfile(Long id) {
+    public User getProfile() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email=auth.getName();
 
-        User requestedUser = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Cannot find user with id " + id));
-//
-//        if (!auth.getName().equals(requestedUser.getEmail())) {
-//            throw new UnauthorizedException("Unauthorized access");
-//        }
+        User requestedUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Cannot find user " + email));
 
         return requestedUser;
     }

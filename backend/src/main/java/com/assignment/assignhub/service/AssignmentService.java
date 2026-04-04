@@ -26,11 +26,18 @@ public class AssignmentService {
     private final UserRepository userRepository;
     UnitRepository unitRepository;
     AssignmentRepository assignmentRepository;
-    public AssignmentService(AssignmentRepository assignmentRepository, UnitRepository unitRepository, com.cloudinary.Cloudinary cloudinary, UserRepository userRepository){
+    CloudinaryService cloudinaryService;
+    public AssignmentService(AssignmentRepository assignmentRepository,
+                             UnitRepository unitRepository,
+                             com.cloudinary.Cloudinary cloudinary,
+                             UserRepository userRepository,
+                             CloudinaryService cloudinaryService
+    ){
         this.assignmentRepository=assignmentRepository;
         this.unitRepository = unitRepository;
         this.cloudinary = cloudinary;
         this.userRepository = userRepository;
+        this.cloudinaryService=cloudinaryService;
     }
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
@@ -93,4 +100,26 @@ public class AssignmentService {
 //    public List<AssignmentResponse> instructorViewAssignments(String email){
 //
 //    }
+
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    public String deleteAssignment(Long id){
+        Assignment assignment=assignmentRepository.findById(id)
+                .orElseThrow(()->new NotFoundException("Cannot find assignment with id "+id));
+        String res;
+        if(assignment.getResourceType().equals("Document")){
+            res="raw";
+        }else if(assignment.getResourceType().equals("Photo")){
+            res="image";
+        }else{
+            res="video";
+        }
+
+        try{
+            cloudinaryService.deleteFiles(assignment.getAssignmentPublicIds(),res);
+            assignmentRepository.deleteById(id);
+            return "Assignment deleted successfully";
+        }catch(Exception e){
+            throw new OperationFailException("Unable to delete assignment");
+        }
+    }
 }

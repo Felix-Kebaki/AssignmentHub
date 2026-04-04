@@ -16,7 +16,7 @@ public class CloudinaryService {
         this.cloudinary = cloudinary;
     }
 
-    public void deleteFiles(List<String> publicIds){
+    public void deleteFiles(List<String> publicIds,String resource){
         if(publicIds==null || publicIds.isEmpty()){
             return;
         }
@@ -24,7 +24,7 @@ public class CloudinaryService {
         for(String publicId:publicIds){
             try{
                 Map<String,String> options=new HashMap<>();
-                options.put("resource_type","auto");
+                options.put("resource_type",resource);
 
                 Map result=cloudinary.uploader().destroy(publicId,options);
                 System.out.println("Deleted: "+publicId+ " -> "+result.get("result"));

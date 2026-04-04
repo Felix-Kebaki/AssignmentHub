@@ -35,7 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         //Skip auth endpoints
-        if (path.startsWith("/auth/login") || path.startsWith("/auth/logout")) {
+        if (path.equals("/auth/login")) {
             filterChain.doFilter(request, response);
             return;
         }
