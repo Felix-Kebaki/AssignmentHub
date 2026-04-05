@@ -183,4 +183,12 @@ public class UserService implements UserDetailsService {
             throw new NotFoundException("Unable to fetch users");
         }
     }
+
+    public List<UserResponse> getInstructors(String role){
+        try{
+            return userRepository.findByRole(role);
+        }catch(Exception e){
+            throw new OperationFailException("Unable to fetch instructors");
+        }
+    }
 }

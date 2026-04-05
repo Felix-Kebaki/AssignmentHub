@@ -7,10 +7,13 @@ import com.assignment.assignhub.exception.OperationFailException;
 import com.assignment.assignhub.mapper.AssignmentMapper;
 import com.assignment.assignhub.model.Assignment;
 import com.assignment.assignhub.model.Unit;
+import com.assignment.assignhub.model.User;
 import com.assignment.assignhub.repository.AssignmentRepository;
 import com.assignment.assignhub.repository.UnitRepository;
 import com.assignment.assignhub.repository.UserRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -97,9 +100,21 @@ public class AssignmentService {
                 .orElseThrow(()->new NotFoundException("Cannot find assignment with id "+id));
     }
 
-//    public List<AssignmentResponse> instructorViewAssignments(String email){
-//
-//    }
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    public List<AssignmentResponse> instructorViewAssignments(){
+        Authentication auth= SecurityContextHolder.getContext().getAuthentication();
+        User user=userRepository.findByEmail(auth.getName())
+                .orElseThrow(()->new NotFoundException("Cannot find user "+auth.getName()));
+        try {
+            return assignmentRepository.findByUnitInstructorId(user.getId())
+                    .stream()
+                    .map(AssignmentMapper::toDTO)
+                    .toList();
+        }catch(Exception e){
+            throw new OperationFailException("Unable to fetch assignments");
+        }
+
+    }
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
     public String deleteAssignment(Long id){

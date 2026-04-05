@@ -95,7 +95,10 @@ public class UserController {
     }
 
     @GetMapping("/getAllUsers")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers(@RequestParam(required = false) String role) {
+        if(role!=null){
+            return ResponseEntity.ok(userService.getInstructors(role));
+        }
         return ResponseEntity.ok(userService.getAllUsers());
     }
 }

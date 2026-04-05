@@ -1,0 +1,36 @@
+.ProfileMainTitle{
+    font-size:1.2rem;
+    margin-top:1rem;
+}
+
+.ProfileMainDiv form{
+    margin-top:0.8rem;
+}
+
+.EachProfileInputDiv{
+    margin-top:0.4rem;
+}
+
+.EachProfileInputDiv label{
+    font-size:0.9rem;
+}
+
+.EachProfileInputDiv input{
+    width:30rem;
+    padding:0.2rem 0.3rem;
+    outline: none;
+}
+
+.SubmitProfileBtnDiv{
+    margin-top:0.6rem;
+}
+
+.SubmitProfileBtnDiv button{
+    background-color:rgb(26, 26, 165) ;
+    color:white;
+    padding:0.4rem 0rem;
+    border:none;
+    width:30rem;
+    border-radius: 0.2rem;
+    cursor: pointer;
+}

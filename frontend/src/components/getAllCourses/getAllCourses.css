@@ -1,0 +1,11 @@
+.GetAllCoursesMainTitle {
+  font-size: 1.2rem;
+  margin: 1rem 0rem 0.4rem 0rem;
+}
+
+.EachCourseMainDiv{
+    width:20rem;
+    display:flex;
+    justify-content: space-between;
+    padding:0.3rem 0.2rem;
+}

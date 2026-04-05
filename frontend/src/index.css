@@ -3,3 +3,18 @@
   margin:0rem;
   box-sizing: border-box;
 }
+
+.HomePageMainDiv{
+  padding-bottom:1.5rem;
+}
+
+.HomePageMainDiv ,.ProfilePageMainDiv{
+  width:70rem;
+  margin:0rem auto 0rem;
+}
+
+.CreateUserAndCourseSec{
+  display: flex;
+  width:100%;
+  justify-content: space-between;
+}

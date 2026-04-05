@@ -1,6 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
+import './navbar.css'
+
 export function Navbar() {
 
   const navigate=useNavigate()
@@ -16,9 +18,10 @@ export function Navbar() {
   }
 
   return (
-    <nav>
-        <Link>AssignmentHub</Link>
+    <nav className='NavbarMainNav'>
+        <Link to="/" className='NavbarMainLogo'>AssignmentHub</Link>
         <div>
+          <Link to="/profile">Profile</Link>
           <button onClick={HandleLogoutClick}>Logout</button>
         </div>
     </nav>

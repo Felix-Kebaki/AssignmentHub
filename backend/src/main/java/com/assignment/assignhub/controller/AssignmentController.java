@@ -35,10 +35,10 @@ public class AssignmentController {
         return new ResponseEntity<>(assignmentService.getAssignment(id),HttpStatus.OK);
     }
 
-//    @GetMapping("InstructorAssignmentView/{email}")
-//    public ResponseEntity<List<AssignmentResponse>> instructorViewAssignments(@PathVariable String email){
-//        return new ResponseEntity<>(assignmentService.instructorViewAssignments(email));
-//    }
+    @GetMapping("InstructorAssignmentView")
+    public ResponseEntity<List<AssignmentResponse>> instructorViewAssignments(){
+        return new ResponseEntity<>(assignmentService.instructorViewAssignments(),HttpStatus.OK);
+    }
 
     @DeleteMapping("/deleteAssignment/{id}")
     public ResponseEntity<String> deleteAssignment(@PathVariable Long id){

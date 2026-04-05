@@ -1,0 +1,27 @@
+.GetAllUsersMainDiv{
+    
+}
+
+.GetAllUsersMainTitle {
+  font-size: 1.2rem;
+  margin: 1rem 0rem 0.4rem 0rem;
+}
+
+.GetAllUsersMainDiv table{
+    width:100%;
+}
+
+.GetAllUsersMainDiv table thead{
+    background-color: rgb(209, 209, 209);
+    border: none;
+}
+
+.GetAllUsersMainDiv table thead tr th{
+    border:none;
+    padding:0.3rem 0.3rem;
+    text-align: start;
+}
+
+.GetAllUsersMainDiv table tbody tr td{
+    padding:0.2rem 0.3rem;
+}

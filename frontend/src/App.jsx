@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { LayoutWithNavbar } from "./components/Layouts/LayoutWithNavbar";
 import { LayoutWithoutNavbar } from "./components/Layouts/LayoutWithoutNavbar";
 import { LoginPage } from "./pages/LoginPage";
-import { RegisterPage } from "./pages/RegisterPage";
 import { HomePage } from "./pages/HomePage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ProfilePage } from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -21,10 +21,10 @@ function App() {
               }
             />
             <Route
-              path="/registerUser"
+              path="/profile"
               element={
                 <ProtectedRoute>
-                  <RegisterPage />
+                  <ProfilePage />
                 </ProtectedRoute>
               }
             />
