@@ -66,10 +66,11 @@ export function GetAllUnits() {
                   <td>{unit.courseName}</td>
                   <td>{unit.courseCode}</td>
                   <td>{unit.instructorName}</td>
-                  <FontAwesomeIcon
+                  <td onClick={()=>HandleDeleteUnit(unit.id)}>X</td>
+                  {/* <FontAwesomeIcon
                     icon={faX}
                     onClick={() => HandleDeleteUnit(unit.id)}
-                  />
+                  /> */}
                 </tr>
               ))
             : null}

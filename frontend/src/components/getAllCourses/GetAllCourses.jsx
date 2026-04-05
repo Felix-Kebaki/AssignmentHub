@@ -23,7 +23,6 @@ export function GetAllCourses() {
     const HandleDeleteCourse=async(getId)=>{
         try {
             const res=await axios.delete(`http://localhost:9080/course/deleteCourse/${getId}`,{withCredentials:true})
-            console.log(res)
             setRefetch(!refetch);
         } catch (error) {
               console.error(error.response.data.errorMessage || error.response.data || error.response)
@@ -41,7 +40,8 @@ export function GetAllCourses() {
             data?.map((course)=>(
                 <div key={course.id} className="EachCourseMainDiv">
                     <p>{course.courseName}</p>
-                    <FontAwesomeIcon icon={faX} onClick={()=>HandleDeleteCourse(course.id)}/>
+                    <p onClick={()=>HandleDeleteCourse(course.id)}>X</p>
+                    {/* <FontAwesomeIcon icon={faX} onClick={()=>HandleDeleteCourse(course.id)}/> */}
                 </div>
             ))
         :null}

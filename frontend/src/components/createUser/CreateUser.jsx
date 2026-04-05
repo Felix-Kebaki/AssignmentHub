@@ -1,10 +1,10 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import "../profile/profile.css"
+import "../profile/profile.css";
 
 export function CreateUser() {
-
+  const [data, setData] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -22,7 +22,7 @@ export function CreateUser() {
     }));
   };
 
-    const HandleSubmitCreateUser = async (e) => {
+  const HandleSubmitCreateUser = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
@@ -30,13 +30,43 @@ export function CreateUser() {
         formData,
         { withCredentials: true },
       );
-      console.log(response)
-      setFormData({email:"",password:"",courseName:"",firstName:"",lastName:"",role:""})
+      console.log(response);
+      setFormData({
+        email: "",
+        password: "",
+        courseName: "",
+        firstName: "",
+        lastName: "",
+        role: "",
+      });
     } catch (error) {
-      console.error(error.response.data.errorMessage || error.response.data || error.response);
+      console.error(
+        error.response.data.errorMessage ||
+          error.response.data ||
+          error.response,
+      );
     }
   };
 
+  const fetchCourses = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:9080/course/getAllCourses",
+        { withCredentials: true },
+      );
+      setData(res.data);
+    } catch (error) {
+      console.error(
+        error.response.data.errorMessage ||
+          error.response.data ||
+          error.response,
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchCourses();
+  }, []);
 
   return (
     <div className="ProfileMainDiv">
@@ -90,18 +120,29 @@ export function CreateUser() {
           />
           <br />
         </div>
-        <div className="EachProfileInputDiv">
-          <label htmlFor="CourseId">Course</label>
-          <br />
-          <input
-            type="text"
-            id="CourseId"
-            name="courseName"
-            value={courseName}
-            onChange={OnChange}
-          />
-          <br />
-        </div>
+        {data !== null ? (
+          <div className="EachProfileInputDiv">
+            <label htmlFor="CourseId">Course</label>
+            <br />
+            <select
+              className="SelectInputForOne"
+              id="CourseId"
+              name="courseName"
+              value={courseName}
+              onChange={OnChange}
+            >
+              <option value="" disabled>
+                Select Course
+              </option>
+              {data?.map((course) => (
+                <option value={course.courseName} key={course.id}>
+                  {course.courseName}
+                </option>
+              ))}
+            </select>
+            <br />
+          </div>
+        ) : null}
         <div className="EachProfileInputDiv">
           <label htmlFor="passwordId">Password</label>
           <br />

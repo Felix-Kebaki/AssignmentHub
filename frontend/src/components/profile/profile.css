@@ -21,6 +21,19 @@
     outline: none;
 }
 
+.SelectInputForOne{
+    width:30rem;
+        padding:0.2rem 0.3rem;
+    outline: none;
+}
+
+.SelectInput{
+    width:30rem;
+    height: 3rem;
+    outline: none;
+    padding: 0.2rem 0.3rem;
+}
+
 .SubmitProfileBtnDiv{
     margin-top:0.6rem;
 }

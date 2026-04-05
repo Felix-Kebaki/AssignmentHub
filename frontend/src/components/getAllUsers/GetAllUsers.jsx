@@ -31,7 +31,6 @@ export function GetAllUsers() {
         `http://localhost:9080/auth/deleteUser/${getId}`,
         { withCredentials: true },
       );
-      console.log(res);
       setRefetch(!refetch);
     } catch (error) {
       console.error(
@@ -66,10 +65,11 @@ export function GetAllUsers() {
                 </td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
-                <FontAwesomeIcon
+                <td onClick={()=>HandleDeleteUser(user.id)}>X</td>
+                {/* <FontAwesomeIcon
                   icon={faX}
                   onClick={() => HandleDeleteUser(user.id)}
-                />
+                /> */}
               </tr>
             ))
           : null}

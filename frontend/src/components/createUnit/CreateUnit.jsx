@@ -1,9 +1,12 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+
+import "../profile/profile.css";
 
 export function CreateUnit() {
   const [selectedCourses, setSelectedCourses] = useState(null);
   const [data, setData] = useState(null);
+  const [instructor, setInstructor] = useState(null);
   const [formData, setFormData] = useState({
     unitName: "",
     unitCode: "",
@@ -66,16 +69,30 @@ export function CreateUnit() {
     }
   };
 
-  const getAllInstructor=async()=>{
-    
-  }
+  const getAllInstructor = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:9080/auth/getAllUsers?role=INSTRUCTOR",
+        { withCredentials: true },
+      );
+      setInstructor(res.data);
+    } catch (error) {
+      console.error(
+        error.response.data.errorMessage ||
+          error.response.data ||
+          error.response,
+      );
+    }
+  };
 
   useEffect(() => {
     getAllCourses();
+    getAllInstructor();
   }, []);
 
   return (
     <div>
+      <p className="ProfileMainTitle">Create Unit</p>
       <form onSubmit={HandleCreateUnit}>
         <div className="EachProfileInputDiv">
           <label htmlFor="courseNameId">Unit name</label>
@@ -101,25 +118,42 @@ export function CreateUnit() {
           />
           <br />
         </div>
-        <div className="EachProfileInputDiv">
-          <label htmlFor="instructorId">Instructor</label>
-          <br />
-          <input
-            type="email"
-            id="instructorId"
-            name="instructorEmail"
-            value={instructorEmail}
-            onChange={OnChange}
-          />
-          <br />
-        </div>
+        {instructor !== null ? (
+          <div className="EachProfileInputDiv">
+            <label htmlFor="instructorId">Instructor</label>
+            <br />
+            <select
+            className="SelectInputForOne"
+              name="instructorEmail"
+              id="instructorId"
+              value={instructorEmail}
+              onChange={OnChange}
+            >
+              <option value="" disabled>
+                Select Instructor
+              </option>
+              {instructor?.map((instructor) => (
+                <option key={instructor.id} value={instructor.email}>
+                  {instructor.email}
+                </option>
+              ))}
+            </select>
+            <br />
+          </div>
+        ) : null}
         {data !== null ? (
           <div className="EachProfileInputDiv">
             <label htmlFor="CourseId">Courses</label>
             <br />
-            <select multiple onChange={HandleSelectChange}>
+            <select
+              multiple
+              onChange={HandleSelectChange}
+              className="SelectInput"
+            >
               {data?.map((course) => (
-                <option value={course.courseName}>{course.courseName}</option>
+                <option value={course.courseName} key={course.id}>
+                  {course.courseName}
+                </option>
               ))}
             </select>
             <br />

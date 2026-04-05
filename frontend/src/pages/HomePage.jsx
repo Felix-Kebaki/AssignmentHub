@@ -32,7 +32,7 @@ export function HomePage() {
       );
       setUnits(response.data);
     } catch (error) {
-      console.errror(
+      console.error(
         error.response.data.errorMessage ||
           error.response.data ||
           error.response,

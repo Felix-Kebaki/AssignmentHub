@@ -1,0 +1,39 @@
+.LoginMainDiv{
+    width:100%;
+    min-height: 100dvh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.LoginMainDiv form{
+    background-color:rgb(209, 209, 209) ;
+    padding:2rem;
+    border:0.5rem;
+}
+
+.LoginMainDiv form div{
+    width:20rem;
+}
+
+.LoginMainDiv form div input{
+    width:100%;
+    padding:0.3rem 0.3rem;
+    outline: none;
+    border-radius: 0.3rem;
+    border:none;
+}
+
+.LoginBtnMainDiv{
+    margin-top:0.8rem;
+}
+
+.LoginBtnMainDiv button{
+    width:100%;
+    background-color: rgb(26, 26, 165);
+    color:white;
+    cursor: pointer;
+    padding:0.3rem;
+    border:none;
+    border-radius: 0.3rem;
+}
