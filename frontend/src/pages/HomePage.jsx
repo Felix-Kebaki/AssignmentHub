@@ -8,50 +8,36 @@ import { GetAllUsers } from "../components/getAllUsers/GetAllUsers";
 import "../index.css";
 import { GetAllUnits } from "../components/getAllUnits/GetAllUnits";
 import { CreateUnit } from "../components/createUnit/CreateUnit";
+import { GetYourUnits } from "../components/getYourUnits/GetYourUnits";
+import { GetInstructorUnits } from "../components/getInstructorUnits/GetInstructorUnits";
+import { GetInstructorAssignments } from "../components/getInstructorAssignments/GetInstructorAssignments";
 
 export function HomePage() {
-  const [data, setData] = useState({});
-  const [units, setUnits] = useState(null);
+  const [data, setData] = useState(null);
 
   const fetchProfile = async () => {
     try {
       const response = await axios.get(`http://localhost:9080/auth/profile`, {
         withCredentials: true,
       });
+      console.log(response.data)
       setData(response.data);
     } catch (error) {
       console.error(error.response.data.errorMessage || error.response);
     }
   };
 
-  const fetchYourUnits = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:9080/units/getYourUnits",
-        { withCredentials: true },
-      );
-      setUnits(response.data);
-    } catch (error) {
-      console.error(
-        error.response.data.errorMessage ||
-          error.response.data ||
-          error.response,
-      );
-    }
-  };
-
   useEffect(() => {
     fetchProfile();
-    fetchYourUnits();
   }, []);
 
   return (
     <div className="HomePageMainDiv">
       <section>
-        <p>Hello {data.firstName}, welcome to AssignmentHub.</p>
+        <p>Hello {data?.firstName}{data?.role==="STUDENT"? <span>({data?.courseName} student)</span>:null}, welcome to AssignmentHub.</p>
       </section>
 
-      {data.role == "ADMIN" ? (
+      {data?.role === "ADMIN" ? (
         <>
           <section className="CreateUserAndCourseSec">
             <CreateUser />
@@ -72,20 +58,21 @@ export function HomePage() {
         </>
       ) : null}
 
-      {data?.role == "STUDENT" ? (
-        <div>
-          {units !== null ? (
-            <div>
-              {units.map((unit) => (
-                <div key={unit.id}>
-                  <p>{unit.courseName}</p>
-                  <p>{unit.instructorName}</p>
-                </div>
-              ))}
-            </div>
-          ) : null}
-        </div>
+      {data?.role === "STUDENT" ? (
+        <>
+          <section>
+            <GetYourUnits/>
+          </section>
+        </>
       ) : null}
+
+      {data?.role === "INSTRUCTOR"?(
+        <>
+          <GetInstructorUnits/>
+          <GetInstructorAssignments/>
+        </>
+      ):null}
+
     </div>
   );
 }

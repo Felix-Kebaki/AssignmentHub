@@ -1,6 +1,7 @@
 package com.assignment.assignhub.controller;
 
 import com.assignment.assignhub.dto.UnitResponse;
+import com.assignment.assignhub.model.Role;
 import com.assignment.assignhub.model.Unit;
 import com.assignment.assignhub.service.UnitService;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,10 @@ public class UnitController {
     }
 
     @GetMapping("/getYourUnits")
-    public ResponseEntity<List<UnitResponse>> getYourUnits(){
+    public ResponseEntity<List<UnitResponse>> getYourUnits(@RequestParam(required = false) Role role){
+        if(role != null ){
+            return new ResponseEntity<>(unitService.getInstructorUnits(),HttpStatus.OK);
+        }
         return new ResponseEntity<>(unitService.getYourUnits(),HttpStatus.OK);
     }
 }

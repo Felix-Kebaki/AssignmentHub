@@ -16,6 +16,7 @@ public class Assignment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String assignmentName;
+    private String link;
 
     @ElementCollection
     private List<String> fileUrls = new ArrayList<>();

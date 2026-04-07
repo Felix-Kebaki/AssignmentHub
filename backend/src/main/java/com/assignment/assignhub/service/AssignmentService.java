@@ -50,8 +50,12 @@ public class AssignmentService {
             List<MultipartFile> files,
             Long id
     ){
-        if(assignmentName ==null || fileType==null || files==null || files.isEmpty()){
+        if(assignmentName ==null || fileType==null ){
             throw new FormIsIncompleteException("Input all fields");
+        }
+
+        if(!fileType.equals("Link") && (files==null || files.isEmpty())){
+            throw new FormIsIncompleteException("Upload files");
         }
 
         Unit unit=unitRepository.findById(id)
@@ -113,7 +117,6 @@ public class AssignmentService {
         }catch(Exception e){
             throw new OperationFailException("Unable to fetch assignments");
         }
-
     }
 
     @PreAuthorize("hasRole('INSTRUCTOR')")

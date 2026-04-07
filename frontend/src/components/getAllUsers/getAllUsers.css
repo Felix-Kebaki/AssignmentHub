@@ -25,3 +25,9 @@
 .GetAllUsersMainDiv table tbody tr td{
     padding:0.2rem 0.3rem;
 }
+
+.AddAssignmentOnUnit span{
+    border-bottom: 0.1rem black solid;
+    padding: 0.2rem;
+    cursor: pointer;
+}

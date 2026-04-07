@@ -145,4 +145,20 @@ public class UnitService {
             throw new OperationFailException("Unable to fetch");
         }
     }
+
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    public List<UnitResponse> getInstructorUnits(){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        User user=userRepository.findByEmail(auth.getName())
+                .orElseThrow(()->new NotFoundException("Cannot find user "+auth.getName()));
+
+        try{
+            return unitRepository.findByInstructor(user)
+                    .stream()
+                    .map(UnitMapper::toDTO)
+                    .toList();
+        }catch(Exception e){
+            throw new OperationFailException("Unable to get units");
+        }
+    }
 }

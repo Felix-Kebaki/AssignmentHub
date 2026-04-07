@@ -1,0 +1,46 @@
+.CreateAssignmentMainDiv{
+    background-color: white;
+    padding:1.5rem;
+}
+
+.ExitAssignmentIconDiv{
+    width:100%;
+    display: flex;
+    justify-content: end;
+}
+
+#ExitCreateAssignment{
+    cursor: pointer;
+    font-size:0.9rem;
+}
+
+.CreateAssignmentMainDiv form div{
+    width:25rem;
+    margin-bottom:0.5rem;
+}
+
+.CreateAssignmentMainDiv form div label{
+    font-size:0.9rem;
+}
+
+.CreateAssignmentMainDiv form div input{
+    width:100%;
+    padding:0.3rem 0.2rem;
+    border-radius: 0.3rem;
+}
+
+.CreateAssignmentMainDiv form div select{
+    width:100%;
+    padding:0.3rem 0.2rem;
+    border-radius: 0.3rem;
+}
+
+.CreateAssignmentMainDiv form div button{
+    width:100%;
+    background-color: rgb(26, 26, 165);
+    color:white;
+    cursor:pointer;
+    border:none;
+    padding:0.3rem 0rem ;
+    border-radius: 0.3rem;
+}

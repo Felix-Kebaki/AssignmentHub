@@ -26,7 +26,7 @@ public class User {
     @Transient
     private String courseName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")
     @JsonBackReference
     private Course course;

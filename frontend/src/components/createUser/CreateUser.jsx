@@ -59,7 +59,7 @@ export function CreateUser() {
       console.error(
         error.response.data.errorMessage ||
           error.response.data ||
-          error.response,
+          error.response
       );
     }
   };

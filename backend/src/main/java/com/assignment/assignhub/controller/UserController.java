@@ -3,6 +3,7 @@ package com.assignment.assignhub.controller;
 import com.assignment.assignhub.dto.AuthResponse;
 import com.assignment.assignhub.dto.UserResponse;
 import com.assignment.assignhub.exception.OperationFailException;
+import com.assignment.assignhub.model.Role;
 import com.assignment.assignhub.model.User;
 import com.assignment.assignhub.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -80,7 +81,7 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<User> getProfile() {
+    public ResponseEntity<UserResponse> getProfile() {
         return ResponseEntity.ok(userService.getProfile());
     }
 
@@ -95,7 +96,7 @@ public class UserController {
     }
 
     @GetMapping("/getAllUsers")
-    public ResponseEntity<List<UserResponse>> getAllUsers(@RequestParam(required = false) String role) {
+    public ResponseEntity<List<UserResponse>> getAllUsers(@RequestParam(required = false) Role role) {
         if(role!=null){
             return ResponseEntity.ok(userService.getInstructors(role));
         }

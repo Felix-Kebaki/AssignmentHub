@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.stream;
+
 @Service
 public class UserService implements UserDetailsService {
 
@@ -112,14 +114,14 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public User getProfile() {
+    public UserResponse getProfile() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email=auth.getName();
 
-        User requestedUser = userRepository.findByEmail(email)
+        User requestedUser = userRepository.findByEmailWithCourse(email)
                 .orElseThrow(() -> new NotFoundException("Cannot find user " + email));
 
-        return requestedUser;
+        return UserMapper.toDTO(requestedUser);
     }
 
     @Transactional
@@ -184,9 +186,12 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public List<UserResponse> getInstructors(String role){
+    public List<UserResponse> getInstructors(Role role){
         try{
-            return userRepository.findByRole(role);
+            return userRepository.findByRole(role)
+                    .stream()
+                    .map(UserMapper::toDTO)
+                    .toList();
         }catch(Exception e){
             throw new OperationFailException("Unable to fetch instructors");
         }

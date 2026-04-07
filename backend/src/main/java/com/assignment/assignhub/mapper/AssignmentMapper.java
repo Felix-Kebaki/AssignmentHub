@@ -11,6 +11,8 @@ public class AssignmentMapper {
         dto.setAssignmentName(assignment.getAssignmentName());
         dto.setResourceType(assignment.getResourceType());
         dto.setFileUrls(assignment.getFileUrls());
+        dto.setUnitName(assignment.getUnit().getUnitName());
+        dto.setUnitCode(assignment.getUnit().getUnitCode());
         return dto;
     }
 }

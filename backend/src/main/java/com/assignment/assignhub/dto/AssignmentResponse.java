@@ -10,4 +10,6 @@ public class AssignmentResponse {
     private String assignmentName;
     private String resourceType;
     private List<String> fileUrls;
+    private String unitCode;
+    private String unitName;
 }
