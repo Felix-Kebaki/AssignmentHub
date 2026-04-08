@@ -1,14 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faX } from "@fortawesome/free-solid-svg-icons";
-
 import "../getAllUsers/getAllUsers.css"
 
 export function GetAllUnits() {
   const [data, setData] = useState(null);
   const [refetch,setRefetch]=useState(false)
+  const [hoverId,setHoverId]=useState(null)
 
   const getAllUnits = async () => {
     try {
@@ -62,15 +60,20 @@ export function GetAllUnits() {
         <tbody>
           {data !== null
             ? data?.map((unit) => (
-                <tr key={unit.id}>
+                <tr key={unit.id} 
+                  className="TableRawMainDiv"
+                  onMouseEnter={() => setHoverId(unit.id)}
+                  onMouseLeave={() => setHoverId(null)}>
                   <td>{unit.courseName}</td>
                   <td>{unit.courseCode}</td>
                   <td>{unit.instructorName}</td>
-                  <td onClick={()=>HandleDeleteUnit(unit.id)}>X</td>
-                  {/* <FontAwesomeIcon
-                    icon={faX}
-                    onClick={() => HandleDeleteUnit(unit.id)}
-                  /> */}
+                  {hoverId === unit.id ? (
+                    <div className="AssignmentSubmitBtnDiv">
+                      <button onClick={() => HandleDeleteUnit(unit.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  ) : null}
                 </tr>
               ))
             : null}

@@ -2,6 +2,7 @@ package com.assignment.assignhub.dto;
 
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -12,4 +13,6 @@ public class AssignmentResponse {
     private List<String> fileUrls;
     private String unitCode;
     private String unitName;
+    private Integer submissionsMade;
+    private LocalDate dueDate;
 }

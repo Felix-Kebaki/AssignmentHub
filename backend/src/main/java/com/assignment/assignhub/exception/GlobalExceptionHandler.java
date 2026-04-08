@@ -52,4 +52,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
     }
 
+    @ResponseBody
+    @ExceptionHandler(OutOfTimeException.class)
+    public ResponseEntity<Map<String,String>> exceptionHandler(OutOfTimeException exception){
+        Map<String,String> errorMap=new HashMap<>();
+        errorMap.put("errorMessage",exception.getMessage());
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+    }
+
 }

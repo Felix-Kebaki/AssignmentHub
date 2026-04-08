@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
-import "./getAllUsers.css"
+import "./getAllUsers.css";
 
 export function GetAllUsers() {
   const [data, setData] = useState(null);
   const [refetch, setRefetch] = useState(false);
+  const [hoverId, setHoverId] = useState(null);
 
   const getAllUsers = async () => {
     try {
@@ -47,33 +48,40 @@ export function GetAllUsers() {
 
   return (
     <div className="GetAllUsersMainDiv">
-        <p className="GetAllUsersMainTitle">All Users</p>
+      <p className="GetAllUsersMainTitle">All Users</p>
       <table>
         <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-            </tr>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+          </tr>
         </thead>
         <tbody>
-        {data !== null
-          ? data?.map((user) => (
-              <tr key={user.id}>
-                <td>
-                  {user.firstName} {user.lastName}
-                </td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td onClick={()=>HandleDeleteUser(user.id)}>X</td>
-                {/* <FontAwesomeIcon
-                  icon={faX}
-                  onClick={() => HandleDeleteUser(user.id)}
-                /> */}
-              </tr>
-            ))
-          : null}
-          </tbody>
+          {data !== null
+            ? data?.map((user) => (
+                <tr
+                  key={user.id}
+                  className="TableRawMainDiv"
+                  onMouseEnter={() => setHoverId(user.id)}
+                  onMouseLeave={() => setHoverId(null)}
+                >
+                  <td>
+                    {user.firstName} {user.lastName}
+                  </td>
+                  <td>{user.email}</td>
+                  <td>{user.role}</td>
+                  {hoverId === user.id ? (
+                    <div className="AssignmentSubmitBtnDiv">
+                      <button onClick={() => HandleDeleteUser(user.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  ) : null}
+                </tr>
+              ))
+            : null}
+        </tbody>
       </table>
     </div>
   );

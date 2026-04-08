@@ -10,10 +10,11 @@ export function CreateAssignment({ create, setCreate }) {
   const [upload, setUpload] = useState([]);
   const [formData, setFormData] = useState({
     assignmentName: "",
+    dueDate:"",
     fileType: "",
-    link: "",
+    link: ""
   });
-  const { assignmentName, fileType, link } = formData;
+  const { assignmentName, fileType, link ,dueDate} = formData;
 
   const OnChange = (e) => {
     setFormData((prev) => ({
@@ -32,6 +33,7 @@ export function CreateAssignment({ create, setCreate }) {
 
     formDataToSend.append("assignmentName", assignmentName);
     formDataToSend.append("fileType", fileType);
+    formDataToSend.append("dueDate",dueDate)
 
     if (fileType === "Link") {
       formDataToSend.append("link", link);
@@ -55,6 +57,7 @@ export function CreateAssignment({ create, setCreate }) {
       console.log(res.data);
       setFormData({
         assignmentName: "",
+        dueDate:"",
         fileType: "",
         link: "",
       });
@@ -86,6 +89,18 @@ export function CreateAssignment({ create, setCreate }) {
             id="AssignmentId"
             name="assignmentName"
             value={assignmentName}
+            onChange={OnChange}
+          />
+          <br />
+        </div>
+        <div className="EachProfileInputDiv">
+          <label htmlFor="DueId">Due date</label>
+          <br />
+          <input
+            type="date"
+            id="DueId"
+            name="dueDate"
+            value={dueDate}
             onChange={OnChange}
           />
           <br />

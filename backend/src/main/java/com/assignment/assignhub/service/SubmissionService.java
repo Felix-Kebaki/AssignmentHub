@@ -1,11 +1,12 @@
 package com.assignment.assignhub.service;
 
-import com.assignment.assignhub.exception.FormIsIncompleteException;
-import com.assignment.assignhub.exception.NotFoundException;
-import com.assignment.assignhub.exception.OperationFailException;
-import com.assignment.assignhub.exception.UnauthorizedException;
+import com.assignment.assignhub.dto.SubmissionResponse;
+import com.assignment.assignhub.exception.*;
+import com.assignment.assignhub.mapper.SubmissionMapper;
+import com.assignment.assignhub.model.Assignment;
 import com.assignment.assignhub.model.Submission;
 import com.assignment.assignhub.model.User;
+import com.assignment.assignhub.repository.AssignmentRepository;
 import com.assignment.assignhub.repository.SubmissionRepository;
 import com.assignment.assignhub.repository.UserRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,19 +28,23 @@ public class SubmissionService {
     private final com.cloudinary.Cloudinary cloudinary;
     UserRepository userRepository;
     CloudinaryService cloudinaryService;
+    AssignmentRepository assignmentRepository;
 
     public SubmissionService(SubmissionRepository submissionRepository,
                              com.cloudinary.Cloudinary cloudinary,
                              UserRepository userRepository,
-                             CloudinaryService cloudinaryService) {
+                             CloudinaryService cloudinaryService,
+                             AssignmentRepository assignmentRepository) {
         this.submissionRepository = submissionRepository;
-        this.cloudinary=cloudinary;
-        this.userRepository=userRepository;
+        this.cloudinary = cloudinary;
+        this.userRepository = userRepository;
         this.cloudinaryService = cloudinaryService;
+        this.assignmentRepository = assignmentRepository;
     }
 
     @PreAuthorize("hasRole('STUDENT')")
     public String submitAssignment(
+            Long id,
             String fileType,
             List<MultipartFile> files
     ) {
@@ -48,12 +54,18 @@ public class SubmissionService {
             throw new FormIsIncompleteException("Input all fields");
         }
 
-        Submission submission=new Submission();
+        Assignment assignment = assignmentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Cannot find assignment with id " + id));
+
+        if (assignment.getDueDate() != null && LocalDate.now().isAfter(assignment.getDueDate())) {
+            throw new OutOfTimeException("Submission deadline has passed");
+        }
+        Submission submission = new Submission();
 
         List<String> publicIds = new ArrayList<>();
-        List<String> fileUrls  = new ArrayList<>();
+        List<String> fileUrls = new ArrayList<>();
 
-        try{
+        try {
             for (MultipartFile file : files) {
                 Map<String, Object> options = new HashMap<>();
                 options.put("resource_type", "auto");
@@ -73,10 +85,16 @@ public class SubmissionService {
             submission.setFileUrls(fileUrls);
             submission.setSubmittedAt(LocalDateTime.now());
             submission.setSubmittedBy(getCurrentUser());
+            submission.setAssignment(assignment);
+
+            if (assignment.getSubmissions() == null) {
+                assignment.setSubmissions(new ArrayList<>());
+            }
+            assignment.getSubmissions().add(submission);
 
             submissionRepository.save(submission);
             return "Submission made successfully";
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new OperationFailException("Unable to submit");
         }
     }
@@ -92,36 +110,39 @@ public class SubmissionService {
     }
 
     @PreAuthorize("hasRole('STUDENT')")
-    public String deleteSubmission(Long id){
-        Submission sub=submissionRepository.findById(id)
-                .orElseThrow(()->new NotFoundException("Cannot find submission with id "+id));
+    public String deleteSubmission(Long id) {
+        Submission sub = submissionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Cannot find submission with id " + id));
 
-        if(!getCurrentUser().equals(sub.getSubmittedBy())){
-           throw new UnauthorizedException("Unauthorized access");
+        if (!getCurrentUser().equals(sub.getSubmittedBy())) {
+            throw new UnauthorizedException("Unauthorized access");
         }
         String resource;
-        if(sub.getSubmissionType().equals("Document")){
-            resource="raw";
-        }else if(sub.getSubmissionType().equals("Photo")){
-            resource="image";
-        }else{
-            resource="video";
+        if (sub.getSubmissionType().equals("Document")) {
+            resource = "raw";
+        } else if (sub.getSubmissionType().equals("Photo")) {
+            resource = "image";
+        } else {
+            resource = "video";
         }
 
-        try{
-            cloudinaryService.deleteFiles(sub.getSubmissionPublicIds(),resource);
+        try {
+            cloudinaryService.deleteFiles(sub.getSubmissionPublicIds(), resource);
             submissionRepository.deleteById(id);
             return "Successfully deleted submission";
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new OperationFailException("Unable to delete submission");
         }
     }
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public List<Submission> getSubmissions(Long id){
-        try{
-            return submissionRepository.findByAssignment_id(id);
-        }catch (Exception e){
+    public List<SubmissionResponse> getSubmissions(Long id) {
+        try {
+            return submissionRepository.findByAssignment_id(id)
+                    .stream()
+                    .map(SubmissionMapper::toDTO)
+                    .toList();
+        } catch (Exception e) {
             throw new OperationFailException("Unable to get submissions");
         }
     }

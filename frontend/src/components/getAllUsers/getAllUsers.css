@@ -8,12 +8,30 @@
 }
 
 .GetAllUsersMainDiv table{
-    width:100%;
+    min-width:100%;
 }
 
 .GetAllUsersMainDiv table thead{
     background-color: rgb(209, 209, 209);
     border: none;
+}
+
+.TableRawMainDiv{
+    position:relative;
+}
+
+.TableRawMainDiv:hover{
+    background-color: rgb(240, 240, 240);
+}
+
+
+.AssignmentSubmitBtnDiv button{
+    border:none;
+    background-color: rgb(26, 26, 165);
+    color:white;
+    padding:0.2rem 0.5rem;
+    cursor: pointer;
+    border-radius: 0.2rem;
 }
 
 .GetAllUsersMainDiv table thead tr th{
@@ -22,12 +40,13 @@
     text-align: start;
 }
 
+.AssignmentSubmitBtnDiv{
+    position:absolute;
+    right: 0;
+}
+
+
 .GetAllUsersMainDiv table tbody tr td{
     padding:0.2rem 0.3rem;
 }
 
-.AddAssignmentOnUnit span{
-    border-bottom: 0.1rem black solid;
-    padding: 0.2rem;
-    cursor: pointer;
-}

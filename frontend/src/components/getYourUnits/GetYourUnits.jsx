@@ -41,7 +41,7 @@ export function GetYourUnits() {
           </thead>
           <tbody>
             {units?.map((unit) => (
-              <tr key={unit.id}>
+              <tr key={unit.id} className="TableRawMainDiv">
                 <td>{unit.courseName}</td>
                 <td>{unit.courseCode}</td>
                 <td>{unit.instructorName}</td>

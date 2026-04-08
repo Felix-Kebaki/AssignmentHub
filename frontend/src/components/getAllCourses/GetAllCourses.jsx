@@ -9,6 +9,7 @@ import "./getAllCourses.css"
 export function GetAllCourses() {
     const [data,setData]=useState(null)
     const [refetch,setRefetch]=useState(false);
+    const [hoverId,setHoverId]=useState(null)
 
     const getAll=async()=>{
         try {
@@ -38,10 +39,18 @@ export function GetAllCourses() {
         <p className="GetAllCoursesMainTitle">All Courses</p>
         {data!==null?
             data?.map((course)=>(
-                <div key={course.id} className="EachCourseMainDiv">
+                <div key={course.id} 
+                  className="TableRawMainDiv EachCourseMainDiv"
+                  onMouseEnter={() => setHoverId(course.id)}
+                  onMouseLeave={() => setHoverId(null)}>
                     <p>{course.courseName}</p>
-                    <p onClick={()=>HandleDeleteCourse(course.id)}>X</p>
-                    {/* <FontAwesomeIcon icon={faX} onClick={()=>HandleDeleteCourse(course.id)}/> */}
+                    {hoverId === course.id ? (
+                    <div className="AssignmentSubmitBtnDiv">
+                      <button onClick={() => HandleDeleteCourse(course.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
             ))
         :null}

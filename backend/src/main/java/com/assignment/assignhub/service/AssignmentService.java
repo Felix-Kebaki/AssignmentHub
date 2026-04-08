@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,11 +47,13 @@ public class AssignmentService {
     @PreAuthorize("hasRole('INSTRUCTOR')")
     public String createAssignment(
             String assignmentName,
+            LocalDate dueDate,
             String fileType,
             List<MultipartFile> files,
             Long id
     ){
-        if(assignmentName ==null || fileType==null ){
+
+        if(assignmentName ==null || fileType==null || dueDate==null){
             throw new FormIsIncompleteException("Input all fields");
         }
 
@@ -111,6 +114,23 @@ public class AssignmentService {
                 .orElseThrow(()->new NotFoundException("Cannot find user "+auth.getName()));
         try {
             return assignmentRepository.findByUnitInstructorId(user.getId())
+                    .stream()
+                    .map(AssignmentMapper::toDTO)
+                    .toList();
+        }catch(Exception e){
+            throw new OperationFailException("Unable to fetch assignments");
+        }
+    }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    public List<AssignmentResponse> getAssignmentsForStudent(){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        String email=auth.getName();
+
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(()->new NotFoundException("Cannot find user "+email));
+        try {
+            return assignmentRepository.findAssignmentsByStudentId(user.getId())
                     .stream()
                     .map(AssignmentMapper::toDTO)
                     .toList();

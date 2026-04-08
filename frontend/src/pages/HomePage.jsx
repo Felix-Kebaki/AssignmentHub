@@ -11,6 +11,7 @@ import { CreateUnit } from "../components/createUnit/CreateUnit";
 import { GetYourUnits } from "../components/getYourUnits/GetYourUnits";
 import { GetInstructorUnits } from "../components/getInstructorUnits/GetInstructorUnits";
 import { GetInstructorAssignments } from "../components/getInstructorAssignments/GetInstructorAssignments";
+import { GetAssignmentsStudent } from "../components/getAssignments/GetAssignmentsStudent";
 
 export function HomePage() {
   const [data, setData] = useState(null);
@@ -62,6 +63,9 @@ export function HomePage() {
         <>
           <section>
             <GetYourUnits/>
+          </section>
+          <section>
+            <GetAssignmentsStudent/>
           </section>
         </>
       ) : null}

@@ -7,6 +7,7 @@ import { CreateAssignment } from '../createAssignment/CreateAssignment'
 export function GetInstructorUnits() {
     const [units,setUnits]=useState(null)
     const [create,setCreate]=useState(null)
+    const [hoverId,setHoverId]=useState(null)
 
     
   const HandleCreateAssingment = (getId) => {
@@ -42,11 +43,12 @@ export function GetInstructorUnits() {
             </thead>
             <tbody>
                 {units?.map((unit)=>(
-                    <tr key={unit.id}>
+                    <tr key={unit.id} className='TableRawMainDiv' onMouseEnter={()=>setHoverId(unit.id)} onMouseLeave={()=>setHoverId(null)}>
                         <td>{unit.courseName}</td>
                         <td>{unit.courseCode}</td>
                         <td>{unit.assignments.length}</td>
-                        <td className='AddAssignmentOnUnit'><span onClick={()=>HandleCreateAssingment(unit.id)}>Add Assignment</span></td>
+                        {unit.id===hoverId?
+                        <div className='AssignmentSubmitBtnDiv'><button onClick={()=>HandleCreateAssingment(unit.id)}>Add Assignment</button></div>:null}
                     </tr>
                 ))}
             </tbody>
