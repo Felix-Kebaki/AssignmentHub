@@ -1,18 +1,37 @@
 .ViewAssignmentMain{
     width:100%;
     height: 100dvh;
-    background-color: red;
+    padding:0.5rem;
+}
+
+.ViewAssignmentCancelDiv{
+  width:100%;
+  position:relative;
+}
+
+.ViewAssignmentCancelDiv #ExitViewAssignment{
+  position:absolute;
+  right: 0;
+  top:0;
+  color:white;
+  cursor: pointer;
+  background-color: blue;
+  padding:0.4rem;
+  border-radius: 0.3rem;
 }
 
 .DocumentContainer {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
   row-gap: 0.8rem;
   width:100%;
 }
 
 .DocumentFrame {
   width: 100%;
-  min-height: 100dvh;
+  min-height: 100%;
   border: none;
 }

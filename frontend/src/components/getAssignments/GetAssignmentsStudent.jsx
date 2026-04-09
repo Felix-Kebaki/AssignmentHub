@@ -15,7 +15,6 @@ export function GetAssignmentsStudent() {
     const fetchYourAssignment=async()=>{
         try {
             const res=await axios.get("http://localhost:9080/assignments/getAssignmentsForStudent",{withCredentials:true})
-            console.log(res.data)
             setAssignment(res.data)
         } catch (error) {
                   console.error(
@@ -49,7 +48,7 @@ export function GetAssignmentsStudent() {
                         <td>{assign.assignmentName}</td>
                         <td>{assign.unitName}</td>
                         <td>{assign.unitCode}</td>
-                        <td></td>
+                        <td>{assign.dueDate}</td>
                         {assign.id === hoverId? 
                         <div className="AssignmentSubmitBtnDiv"><button onClick={()=>HandleClickSubmit(assign.id)}>Submit</button></div>:null}
                     </tr>

@@ -4,6 +4,7 @@ import com.assignment.assignhub.dto.AssignmentResponse;
 import com.assignment.assignhub.exception.FormIsIncompleteException;
 import com.assignment.assignhub.exception.NotFoundException;
 import com.assignment.assignhub.exception.OperationFailException;
+import com.assignment.assignhub.exception.UnauthorizedException;
 import com.assignment.assignhub.mapper.AssignmentMapper;
 import com.assignment.assignhub.model.Assignment;
 import com.assignment.assignhub.model.Unit;
@@ -90,6 +91,7 @@ public class AssignmentService {
             assignment.setFileUrls(fileUrls);
             assignment.setAssignmentPublicIds(publicIds);
             assignment.setResourceType(fileType);
+            assignment.setDueDate(dueDate);
 
             assignment.setUnit(unit);
             unit.getAssignments().add(assignment);
@@ -110,6 +112,9 @@ public class AssignmentService {
     @PreAuthorize("hasRole('INSTRUCTOR')")
     public List<AssignmentResponse> instructorViewAssignments(){
         Authentication auth= SecurityContextHolder.getContext().getAuthentication();
+        if(auth==null){
+            throw new UnauthorizedException("Unable to authorize you");
+        }
         User user=userRepository.findByEmail(auth.getName())
                 .orElseThrow(()->new NotFoundException("Cannot find user "+auth.getName()));
         try {
@@ -125,6 +130,9 @@ public class AssignmentService {
     @PreAuthorize("hasRole('STUDENT')")
     public List<AssignmentResponse> getAssignmentsForStudent(){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        if(auth==null){
+            throw new UnauthorizedException("Unable to authorize you");
+        }
         String email=auth.getName();
 
         User user=userRepository.findByEmail(email)

@@ -4,6 +4,8 @@ import com.assignment.assignhub.dto.AssignmentResponse;
 import com.assignment.assignhub.dto.UnitResponse;
 import com.assignment.assignhub.model.Course;
 import com.assignment.assignhub.model.Unit;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class UnitMapper {
     public static UnitResponse toDTO(Unit unit) {
@@ -23,7 +25,11 @@ public class UnitMapper {
                             .toList()
             );
         }
-        if(unit.getAssignments() != null){
+        if (unit.getAssignments() != null) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            boolean isInstructor = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_INSTRUCTOR"));
+
             dto.setAssignments(
                     unit.getAssignments().stream()
                             .map(assignment -> {
@@ -32,6 +38,10 @@ public class UnitMapper {
                                 ar.setAssignmentName(assignment.getAssignmentName());
                                 ar.setResourceType(assignment.getResourceType());
                                 ar.setFileUrls(assignment.getFileUrls());
+                                if (isInstructor) {
+                                    ar.setSubmissionsMade(assignment.getSubmissions() != null ? assignment.getSubmissions().size() : 0);
+                                }
+
                                 return ar;
                             })
                             .toList()

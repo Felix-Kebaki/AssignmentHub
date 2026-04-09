@@ -1,7 +1,6 @@
 package com.assignment.assignhub.controller;
 
 import com.assignment.assignhub.dto.SubmissionResponse;
-import com.assignment.assignhub.model.Submission;
 import com.assignment.assignhub.service.SubmissionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

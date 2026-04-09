@@ -4,17 +4,25 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faFile } from "@fortawesome/free-regular-svg-icons";
 import { faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 
 import "./getInstructorAssignment.css";
 import "../getAllUsers/getAllUsers.css";
 import { GetOneAssignment } from "../getOneAssignment/getOneAssignment";
+import { InstructorViewSubmissions } from "../instructorViewSubmission.jsx/InstructorViewSubmissions";
 
 export function GetInstructorAssignments() {
   const [assignmets, setAssignments] = useState([]);
-  const [view,setView]=useState(null)
+  const [view, setView] = useState(null);
+  const [submissionView, setSubmissionView] = useState(null);
+  const [showMenu, setShowMenu] = useState(null);
 
-  const HandleOpenResource=(getId)=>{
-    setView(getId)
+  const HandleOpenResource = (getId) => {
+    setView(getId);
+  };
+
+  const HandleViewSubmissions=(getId)=>{
+    setSubmissionView(getId)
   }
 
   const fetchAssignments = async () => {
@@ -43,7 +51,10 @@ export function GetInstructorAssignments() {
       {assignmets.length !== 0 ? (
         <div className="InstructorAssignmentViewMainDiv">
           {assignmets?.map((assign) => (
-            <div key={assign.id} className="InstructorAssignmentEachMainDiv" onClick={()=>HandleOpenResource(assign.id)}>
+            <div
+              key={assign.id}
+              className="InstructorAssignmentEachMainDiv"
+            >
               <div className="AssignmentIconMainDiv">
                 {assign.resourceType === "Document" ? (
                   <FontAwesomeIcon icon={faFile} className="AssignmentIcon" />
@@ -58,6 +69,21 @@ export function GetInstructorAssignments() {
                 <p>{assign.unitName}</p>
                 <p>{assign.unitCode}</p>
               </div>
+              <div className="MenuOfAssignments" 
+                  onMouseEnter={() => setShowMenu(assign.id)}
+                  onMouseLeave={() => setShowMenu(null)}>
+                <FontAwesomeIcon
+                  icon={faEllipsisVertical}
+                />
+                <div className="MenuOfAssignmentsWrapperBtnDiv">
+                {showMenu === assign.id ? (
+                  <div className="MenuOfAssignmentsBtnDiv">
+                    <button onClick={()=>HandleOpenResource(assign.id)}>View assignment</button>
+                    <button onClick={()=>HandleViewSubmissions(assign.id)}>View submission</button>
+                  </div>
+                ) : null}
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -67,10 +93,20 @@ export function GetInstructorAssignments() {
         </div>
       )}
 
-      {view !==null ?
-      <div className="OverflowAddMainDiv">
-        <GetOneAssignment view={view} setView={setView}/>
-      </div>:null}
+      {view !== null ? (
+        <div className="OverflowAddMainDiv">
+          <GetOneAssignment view={view} setView={setView} />
+        </div>
+      ) : null}
+
+      {submissionView !== null ? (
+        <div className="OverflowAddMainDiv">
+          <InstructorViewSubmissions
+            submissionView={submissionView}
+            setSubmissionView={setSubmissionView}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

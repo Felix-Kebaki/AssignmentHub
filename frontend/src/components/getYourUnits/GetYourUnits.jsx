@@ -51,12 +51,6 @@ export function GetYourUnits() {
           </tbody>
         </table>
       ) : null}
-      {/* {(units!==null && units?.assignments.length !== 0 )? (
-        <>
-          <p className="GetAllUsersMainTitle">Your Assignments</p>
-
-        </>
-      ) : null} */}
     </div>
   );
 }

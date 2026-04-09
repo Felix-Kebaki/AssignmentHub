@@ -132,6 +132,9 @@ public class UnitService {
     public List<UnitResponse> getYourUnits() {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(auth ==null){
+                throw new UnauthorizedException("Unable to authorize you");
+            }
             User user = userRepository.findByEmail(auth.getName())
                     .orElseThrow(() -> new NotFoundException("Cannot find user"));
 
@@ -149,6 +152,9 @@ public class UnitService {
     @PreAuthorize("hasRole('INSTRUCTOR')")
     public List<UnitResponse> getInstructorUnits(){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        if(auth ==null){
+            throw new UnauthorizedException("Unable to authorize you");
+        }
         User user=userRepository.findByEmail(auth.getName())
                 .orElseThrow(()->new NotFoundException("Cannot find user "+auth.getName()));
 

@@ -1,0 +1,64 @@
+.ViewSubmissionMainDiv{
+    width:97%;
+    margin:0rem auto 0rem;
+    background-color: white;
+    min-height:98dvh;
+}
+
+.ViewSubmissionTopDiv{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:0.2rem;
+}
+
+.ViewSubmissionTopDiv p{
+    font-size:1.2rem;
+}
+
+.ViewSubmissionTopDiv button{
+    padding:0.4rem;
+    border:none;
+    border-radius: 0.2rem;
+    color:white;
+    background-color:rgb(26, 26, 165);
+    cursor: pointer;
+}
+
+.ViewSubmissionWrapperDiv{
+    display: flex;
+    justify-content: start;
+    width:100%;
+    align-items: center;
+    row-gap: 0.4rem;
+    column-gap: 0.65%;
+    flex-wrap: wrap;
+    padding:0.4rem;
+}
+
+.ViewSubmissionEachDiv{
+    background-color: rgb(209, 209, 209);
+    padding:0.8rem;
+    border-radius: 0.3rem;
+    width:24.5%;
+}
+
+.ViewSubmissionEachDiv div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.SubmissionIcon{
+    font-size:7rem;
+    padding:0.5rem 0rem 0rem 0rem;
+    color:white;
+}
+
+.NoSubmissionMadeDiv{
+    padding:0.3rem;
+}
+
+.NoSubmissionMadeDiv p{
+    text-align: center;
+}

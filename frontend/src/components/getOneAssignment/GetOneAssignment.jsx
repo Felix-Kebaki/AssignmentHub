@@ -9,13 +9,16 @@ import "./getOneAssignment.css";
 export function GetOneAssignment({ view, setView }) {
   const [assignment, setAssignment] = useState(null);
 
+  const Cancel=()=>{
+    setView(null);
+  }
+
   const getAssignment = async () => {
     try {
       const res = await axios.get(
         `http://localhost:9080/assignments/getAssignment/${view}`,
         { withCredentials: true },
       );
-      console.log(res.data);
       setAssignment(res.data);
     } catch (error) {
       console.error(
@@ -32,7 +35,7 @@ export function GetOneAssignment({ view, setView }) {
 
   return (
     <div className="ViewAssignmentMain">
-      <div>
+      <div className="ViewAssignmentCancelDiv">
         <FontAwesomeIcon icon={faX} onClick={Cancel} id="ExitViewAssignment" />
       </div>
       {assignment !== null ? (

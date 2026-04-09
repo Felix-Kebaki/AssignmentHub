@@ -21,7 +21,6 @@ export function HomePage() {
       const response = await axios.get(`http://localhost:9080/auth/profile`, {
         withCredentials: true,
       });
-      console.log(response.data)
       setData(response.data);
     } catch (error) {
       console.error(error.response.data.errorMessage || error.response);
