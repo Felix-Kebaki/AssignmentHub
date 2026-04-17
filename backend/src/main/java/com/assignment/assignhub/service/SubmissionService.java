@@ -30,11 +30,7 @@ public class SubmissionService {
     CloudinaryService cloudinaryService;
     AssignmentRepository assignmentRepository;
 
-    public SubmissionService(SubmissionRepository submissionRepository,
-                             com.cloudinary.Cloudinary cloudinary,
-                             UserRepository userRepository,
-                             CloudinaryService cloudinaryService,
-                             AssignmentRepository assignmentRepository) {
+    public SubmissionService(SubmissionRepository submissionRepository, com.cloudinary.Cloudinary cloudinary, UserRepository userRepository, CloudinaryService cloudinaryService, AssignmentRepository assignmentRepository) {
         this.submissionRepository = submissionRepository;
         this.cloudinary = cloudinary;
         this.userRepository = userRepository;
@@ -43,19 +39,21 @@ public class SubmissionService {
     }
 
     @PreAuthorize("hasRole('STUDENT')")
-    public String submitAssignment(
-            Long id,
-            String fileType,
-            List<MultipartFile> files
-    ) {
-        if (fileType == null ||
-                files == null ||
-                files.isEmpty()) {
+    public String submitAssignment(Long id, String fileType, List<MultipartFile> files, String link) {
+        if (fileType == null) {
             throw new FormIsIncompleteException("Input all fields");
         }
 
-        Assignment assignment = assignmentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Cannot find assignment with id " + id));
+        if (fileType.equalsIgnoreCase("link") && link == null) {
+            throw new FormIsIncompleteException("Provide your link");
+        }
+
+        if((fileType.equalsIgnoreCase("Document") || fileType.equalsIgnoreCase("Photo")) &&
+                (files.isEmpty() || files == null)) {
+            throw new FormIsIncompleteException("Provide photo or document");
+        }
+
+        Assignment assignment = assignmentRepository.findById(id).orElseThrow(() -> new NotFoundException("Cannot find assignment with id " + id));
 
         if (assignment.getDueDate() != null && LocalDate.now().isAfter(assignment.getDueDate())) {
             throw new OutOfTimeException("Submission deadline has passed");
@@ -66,23 +64,26 @@ public class SubmissionService {
         List<String> fileUrls = new ArrayList<>();
 
         try {
-            for (MultipartFile file : files) {
-                Map<String, Object> options = new HashMap<>();
-                options.put("resource_type", "auto");
-                Map uploadResult = cloudinary.uploader().upload(
-                        file.getBytes(),
-                        options
-                );
+            if(!fileType.equalsIgnoreCase("link")) {
+                for (MultipartFile file : files) {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("resource_type", "auto");
+                    Map uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
 
-                String url = uploadResult.get("secure_url").toString();
-                String publicId = uploadResult.get("public_id").toString();
+                    String url = uploadResult.get("secure_url").toString();
+                    String publicId = uploadResult.get("public_id").toString();
 
-                fileUrls.add(url);
-                publicIds.add(publicId);
+                    fileUrls.add(url);
+                    publicIds.add(publicId);
+                }
+                submission.setSubmissionType(fileType);
+                submission.setSubmissionPublicIds(publicIds);
+                submission.setFileUrls(fileUrls);
+            }else{
+                submission.setSubmissionType(fileType);
+                submission.setLink(link);
             }
-            submission.setSubmissionType(fileType);
-            submission.setSubmissionPublicIds(publicIds);
-            submission.setFileUrls(fileUrls);
+
             submission.setSubmittedAt(LocalDateTime.now());
             submission.setSubmittedBy(getCurrentUser());
             submission.setAssignment(assignment);
@@ -100,19 +101,14 @@ public class SubmissionService {
     }
 
     private User getCurrentUser() {
-        String email = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @PreAuthorize("hasRole('STUDENT')")
     public String deleteSubmission(Long id) {
-        Submission sub = submissionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Cannot find submission with id " + id));
+        Submission sub = submissionRepository.findById(id).orElseThrow(() -> new NotFoundException("Cannot find submission with id " + id));
 
         if (!getCurrentUser().equals(sub.getSubmittedBy())) {
             throw new UnauthorizedException("Unauthorized access");
@@ -138,10 +134,7 @@ public class SubmissionService {
     @PreAuthorize("hasRole('INSTRUCTOR')")
     public List<SubmissionResponse> getSubmissions(Long id) {
         try {
-            return submissionRepository.findByAssignment_id(id)
-                    .stream()
-                    .map(SubmissionMapper::toDTO)
-                    .toList();
+            return submissionRepository.findByAssignment_id(id).stream().map(SubmissionMapper::toDTO).toList();
         } catch (Exception e) {
             throw new OperationFailException("Unable to get submissions");
         }

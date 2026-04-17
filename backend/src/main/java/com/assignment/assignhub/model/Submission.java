@@ -16,6 +16,7 @@ public class Submission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String link;
 
     @ElementCollection
     private List<String> fileUrls = new ArrayList<>();

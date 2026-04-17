@@ -27,7 +27,7 @@ export function GetAssignmentsStudent() {
 
     useEffect(()=>{
         fetchYourAssignment();
-    },[])
+    },[submitAssign])
 
   return (
     <div className="GetAllUsersMainDiv">
@@ -59,7 +59,7 @@ export function GetAssignmentsStudent() {
 
         {
             submitAssign!==null?<div className="OverflowAddMainDiv">
-                <MakeSubmission/>
+                <MakeSubmission submitAssign={submitAssign} setSubmitAssign={setSubmitAssign}/>
             </div>:null
         }
     </div>

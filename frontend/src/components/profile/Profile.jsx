@@ -28,7 +28,6 @@ export function Profile() {
         withCredentials: true,
       });
       setData(res.data);
-      console.log(data);
     } catch (error) {
       console.error(
         error.response.data.errorMessage ||

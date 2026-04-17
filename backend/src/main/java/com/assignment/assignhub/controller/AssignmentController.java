@@ -26,9 +26,10 @@ public class AssignmentController {
             @RequestParam("fileType") String fileType,
             @RequestParam("assignmentName") String assignmentName,
             @RequestParam("dueDate") LocalDate dueDate,
-            @RequestParam("files") List<MultipartFile> files,
-            @PathVariable Long id){
-        return new ResponseEntity<>(assignmentService.createAssignment(assignmentName,dueDate,fileType,files,id), HttpStatus.CREATED);
+            @RequestParam(value = "files",required = false) List<MultipartFile> files,
+            @PathVariable Long id,
+            @RequestParam(value = "link",required = false) String link){
+        return new ResponseEntity<>(assignmentService.createAssignment(assignmentName,dueDate,fileType,files,id,link), HttpStatus.CREATED);
     }
 
     @GetMapping("/getAssignment/{id}")

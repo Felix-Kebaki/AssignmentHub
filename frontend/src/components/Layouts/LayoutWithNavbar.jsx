@@ -6,7 +6,7 @@ export function LayoutWithNavbar() {
     <>
       <Navbar />
       <main>
-        <Outlet /> {/* Nested routes will render here */}
+        <Outlet /> 
       </main>
     </>
   );

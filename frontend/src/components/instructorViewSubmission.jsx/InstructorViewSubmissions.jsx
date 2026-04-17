@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faFile } from "@fortawesome/free-regular-svg-icons";
-import { faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faVideo ,faLink} from "@fortawesome/free-solid-svg-icons";
 
 import "./instructorViewSubmissions.css";
 

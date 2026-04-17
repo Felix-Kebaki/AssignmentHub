@@ -42,8 +42,8 @@ export function CreateAssignment({ create, setCreate }) {
         formDataToSend.append("files", file);
       });
     }
+   
     try {
-
       const res = await axios.post(
         `http://localhost:9080/assignments/create/${create}`,
         formDataToSend,
@@ -62,6 +62,7 @@ export function CreateAssignment({ create, setCreate }) {
         link: "",
       });
       setUpload([]);
+      setCreate(null)
     } catch (error) {
       console.error(
         error.response.data.errorMessage ||

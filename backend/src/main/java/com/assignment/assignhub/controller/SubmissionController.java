@@ -14,27 +14,29 @@ import java.util.List;
 public class SubmissionController {
 
     SubmissionService submissionService;
-    public SubmissionController(SubmissionService submissionService){
-        this.submissionService=submissionService;
+
+    public SubmissionController(SubmissionService submissionService) {
+        this.submissionService = submissionService;
     }
 
     @PostMapping("/makeSubmission/{id}")
     public ResponseEntity<String> submitAssignment(
-            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam(value = "files",required = false) List<MultipartFile> files,
             @RequestParam("fileType") String fileType,
-            @PathVariable Long id
-    ){
-        return new ResponseEntity<>(submissionService.submitAssignment(id,fileType,files), HttpStatus.OK);
+            @PathVariable Long id,
+            @RequestParam(value = "link", required = false) String link
+    ) {
+        return new ResponseEntity<>(submissionService.submitAssignment(id, fileType, files,link), HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteSubmission/{id}")
-    public ResponseEntity<String> deleteSubmission(@PathVariable Long id){
-        return new ResponseEntity<>(submissionService.deleteSubmission(id),HttpStatus.OK);
+    public ResponseEntity<String> deleteSubmission(@PathVariable Long id) {
+        return new ResponseEntity<>(submissionService.deleteSubmission(id), HttpStatus.OK);
     }
 
     @GetMapping("/getSubmissions/{id}")
-    public ResponseEntity<List<SubmissionResponse>> getSubmissions(@PathVariable Long id){
-        return new ResponseEntity<>(submissionService.getSubmissions(id),HttpStatus.OK);
+    public ResponseEntity<List<SubmissionResponse>> getSubmissions(@PathVariable Long id) {
+        return new ResponseEntity<>(submissionService.getSubmissions(id), HttpStatus.OK);
     }
 
 }

@@ -32,17 +32,18 @@ public class AssignmentService {
     UnitRepository unitRepository;
     AssignmentRepository assignmentRepository;
     CloudinaryService cloudinaryService;
+
     public AssignmentService(AssignmentRepository assignmentRepository,
                              UnitRepository unitRepository,
                              com.cloudinary.Cloudinary cloudinary,
                              UserRepository userRepository,
                              CloudinaryService cloudinaryService
-    ){
-        this.assignmentRepository=assignmentRepository;
+    ) {
+        this.assignmentRepository = assignmentRepository;
         this.unitRepository = unitRepository;
         this.cloudinary = cloudinary;
         this.userRepository = userRepository;
-        this.cloudinaryService=cloudinaryService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
@@ -51,46 +52,50 @@ public class AssignmentService {
             LocalDate dueDate,
             String fileType,
             List<MultipartFile> files,
-            Long id
-    ){
+            Long id,
+            String link
+    ) {
 
-        if(assignmentName ==null || fileType==null || dueDate==null){
+        if (assignmentName == null || fileType == null || dueDate == null) {
             throw new FormIsIncompleteException("Input all fields");
         }
 
-        if(!fileType.equals("Link") && (files==null || files.isEmpty())){
+        if (!fileType.equals("Link") && (files == null || files.isEmpty())) {
             throw new FormIsIncompleteException("Upload files");
         }
 
-        Unit unit=unitRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException("Cannot find unit with id "+id));
+        Unit unit = unitRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Cannot find unit with id " + id));
 
-//        if(unit.)
-
-        Assignment assignment=new Assignment();
+        Assignment assignment = new Assignment();
         assignment.setAssignmentName(assignmentName);
 
         List<String> publicIds = new ArrayList<>();
-        List<String> fileUrls  = new ArrayList<>();
-        try{
-            for (MultipartFile file : files) {
-                Map<String, Object> options = new HashMap<>();
-                options.put("resource_type", "auto");
-                Map uploadResult = cloudinary.uploader().upload(
-                        file.getBytes(),
-                        options
-                );
+        List<String> fileUrls = new ArrayList<>();
+        try {
+            if (!fileType.equalsIgnoreCase("link")) {
+                for (MultipartFile file : files) {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("resource_type", "auto");
+                    Map uploadResult = cloudinary.uploader().upload(
+                            file.getBytes(),
+                            options
+                    );
 
-                String url = uploadResult.get("secure_url").toString();
-                String publicId = uploadResult.get("public_id").toString();
+                    String url = uploadResult.get("secure_url").toString();
+                    String publicId = uploadResult.get("public_id").toString();
 
-                fileUrls.add(url);
-                publicIds.add(publicId);
+                    fileUrls.add(url);
+                    publicIds.add(publicId);
+                }
+                assignment.setFileUrls(fileUrls);
+                assignment.setAssignmentPublicIds(publicIds);
+                assignment.setResourceType(fileType);
+            }else{
+                assignment.setLink(link);
+                assignment.setResourceType(fileType);
             }
 
-            assignment.setFileUrls(fileUrls);
-            assignment.setAssignmentPublicIds(publicIds);
-            assignment.setResourceType(fileType);
             assignment.setDueDate(dueDate);
 
             assignment.setUnit(unit);
@@ -99,72 +104,72 @@ public class AssignmentService {
             assignmentRepository.save(assignment);
 
             return "Assignment created successfully";
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new OperationFailException("Unable to create assignment");
         }
     }
 
-    public Assignment getAssignment(Long id){
+    public Assignment getAssignment(Long id) {
         return assignmentRepository.findById(id)
-                .orElseThrow(()->new NotFoundException("Cannot find assignment with id "+id));
+                .orElseThrow(() -> new NotFoundException("Cannot find assignment with id " + id));
     }
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public List<AssignmentResponse> instructorViewAssignments(){
-        Authentication auth= SecurityContextHolder.getContext().getAuthentication();
-        if(auth==null){
+    public List<AssignmentResponse> instructorViewAssignments() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
             throw new UnauthorizedException("Unable to authorize you");
         }
-        User user=userRepository.findByEmail(auth.getName())
-                .orElseThrow(()->new NotFoundException("Cannot find user "+auth.getName()));
+        User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new NotFoundException("Cannot find user " + auth.getName()));
         try {
             return assignmentRepository.findByUnitInstructorId(user.getId())
                     .stream()
                     .map(AssignmentMapper::toDTO)
                     .toList();
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new OperationFailException("Unable to fetch assignments");
         }
     }
 
     @PreAuthorize("hasRole('STUDENT')")
-    public List<AssignmentResponse> getAssignmentsForStudent(){
-        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
-        if(auth==null){
+    public List<AssignmentResponse> getAssignmentsForStudent() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
             throw new UnauthorizedException("Unable to authorize you");
         }
-        String email=auth.getName();
+        String email = auth.getName();
 
-        User user=userRepository.findByEmail(email)
-                .orElseThrow(()->new NotFoundException("Cannot find user "+email));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Cannot find user " + email));
         try {
             return assignmentRepository.findAssignmentsByStudentId(user.getId())
                     .stream()
                     .map(AssignmentMapper::toDTO)
                     .toList();
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new OperationFailException("Unable to fetch assignments");
         }
     }
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public String deleteAssignment(Long id){
-        Assignment assignment=assignmentRepository.findById(id)
-                .orElseThrow(()->new NotFoundException("Cannot find assignment with id "+id));
+    public String deleteAssignment(Long id) {
+        Assignment assignment = assignmentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Cannot find assignment with id " + id));
         String res;
-        if(assignment.getResourceType().equals("Document")){
-            res="raw";
-        }else if(assignment.getResourceType().equals("Photo")){
-            res="image";
-        }else{
-            res="video";
+        if (assignment.getResourceType().equals("Document")) {
+            res = "raw";
+        } else if (assignment.getResourceType().equals("Photo")) {
+            res = "image";
+        } else {
+            res = "video";
         }
 
-        try{
-            cloudinaryService.deleteFiles(assignment.getAssignmentPublicIds(),res);
+        try {
+            cloudinaryService.deleteFiles(assignment.getAssignmentPublicIds(), res);
             assignmentRepository.deleteById(id);
             return "Assignment deleted successfully";
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new OperationFailException("Unable to delete assignment");
         }
     }

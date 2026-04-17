@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faFile } from "@fortawesome/free-regular-svg-icons";
 import { faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 
 import "./getInstructorAssignment.css";
@@ -21,9 +22,9 @@ export function GetInstructorAssignments() {
     setView(getId);
   };
 
-  const HandleViewSubmissions=(getId)=>{
-    setSubmissionView(getId)
-  }
+  const HandleViewSubmissions = (getId) => {
+    setSubmissionView(getId);
+  };
 
   const fetchAssignments = async () => {
     try {
@@ -51,15 +52,14 @@ export function GetInstructorAssignments() {
       {assignmets.length !== 0 ? (
         <div className="InstructorAssignmentViewMainDiv">
           {assignmets?.map((assign) => (
-            <div
-              key={assign.id}
-              className="InstructorAssignmentEachMainDiv"
-            >
+            <div key={assign.id} className="InstructorAssignmentEachMainDiv">
               <div className="AssignmentIconMainDiv">
                 {assign.resourceType === "Document" ? (
                   <FontAwesomeIcon icon={faFile} className="AssignmentIcon" />
                 ) : assign.resourceType === "Photo" ? (
                   <FontAwesomeIcon icon={faImage} className="AssignmentIcon" />
+                ) : assign.resourceType === "Link" ? (
+                  <FontAwesomeIcon icon={faLink} className="AssignmentIcon" />
                 ) : (
                   <FontAwesomeIcon icon={faVideo} className="AssignmentIcon" />
                 )}
@@ -69,19 +69,29 @@ export function GetInstructorAssignments() {
                 <p>{assign.unitName}</p>
                 <p>{assign.unitCode}</p>
               </div>
-              <div className="MenuOfAssignments" 
-                  onMouseEnter={() => setShowMenu(assign.id)}
-                  onMouseLeave={() => setShowMenu(null)}>
-                <FontAwesomeIcon
-                  icon={faEllipsisVertical}
-                />
+              <div
+                className="MenuOfAssignments"
+                onMouseEnter={() => setShowMenu(assign.id)}
+                onMouseLeave={() => setShowMenu(null)}
+              >
+                <FontAwesomeIcon icon={faEllipsisVertical} />
                 <div className="MenuOfAssignmentsWrapperBtnDiv">
-                {showMenu === assign.id ? (
-                  <div className="MenuOfAssignmentsBtnDiv">
-                    <button onClick={()=>HandleOpenResource(assign.id)}>View assignment</button>
-                    <button onClick={()=>HandleViewSubmissions(assign.id)}>View submission</button>
-                  </div>
-                ) : null}
+                  {showMenu === assign.id ? (
+                    <div className="MenuOfAssignmentsBtnDiv">
+                      <button
+                        onClick={() => {
+                          assign.resourceType === "Link"
+                            ? window.open(assign.link, "_blank")
+                            : () => HandleOpenResource(assign.id);
+                        }}
+                      >
+                        View assignment
+                      </button>
+                      <button onClick={() => HandleViewSubmissions(assign.id)}>
+                        View submission
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
